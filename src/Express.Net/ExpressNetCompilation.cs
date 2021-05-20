@@ -85,7 +85,12 @@ namespace Express.Net
                 Path.Combine(_output, assemblyName),
                 Path.Combine(_output, pdbName));
 
-            // TODO: Figure out diagnostics!
+
+            foreach (var diagnostic in result.Diagnostics)
+            {
+                diagnostics.Add(Diagnostic.FromCSharpDiagnostic(diagnostic));
+            }
+
             return new EmitResult(result.Success, diagnostics.ToImmutable());
         }
 

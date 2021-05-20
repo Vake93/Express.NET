@@ -1,4 +1,5 @@
 ﻿using Express.Net.CodeAnalysis.Text;
+using CSharpDiagnostic = Microsoft.CodeAnalysis.Diagnostic;
 
 namespace Express.Net.CodeAnalysis.Diagnostics
 {
@@ -18,6 +19,23 @@ namespace Express.Net.CodeAnalysis.Diagnostics
         public string Message { get; init; }
 
         public override string ToString() => $"{DiagnosticType}: {Message} @ {Location}";
+
+        public static Diagnostic FromCSharpDiagnostic(CSharpDiagnostic diagnostic)
+        {
+            var location = new TextLocation();
+
+            switch (diagnostic.Severity)
+            {
+                case Microsoft.CodeAnalysis.DiagnosticSeverity.Error:
+                    return Error(location, diagnostic.GetMessage());
+
+                case Microsoft.CodeAnalysis.DiagnosticSeverity.Warning:
+                    return Warning(location, diagnostic.GetMessage());
+
+                default:
+                    return Information(location, diagnostic.GetMessage());
+            }
+        }
 
         public static Diagnostic Error(TextLocation location, string message)
             => new (DiagnosticType.Error, location, message);
