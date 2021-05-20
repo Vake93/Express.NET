@@ -25,7 +25,7 @@ namespace Express.Build.Commands
         {
             var projectFolder = string.IsNullOrEmpty(settings.ProjectFolder) ?
                 Directory.GetCurrentDirectory() :
-                settings.ProjectFolder;
+                settings.ProjectFolder.TrimEnd('\\', '/').Trim();
 
             var configuration = "Debug";
 
@@ -90,6 +90,11 @@ namespace Express.Build.Commands
             else
             {
                 AnsiConsole.WriteLine("Build Error.");
+
+                foreach (var diagnostic in result.Diagnostics)
+                {
+                    AnsiConsole.WriteLine(diagnostic.Message);
+                }
             }
 
             return 0;
