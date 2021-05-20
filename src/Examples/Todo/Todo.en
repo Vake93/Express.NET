@@ -1,0 +1,85 @@
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+service "api/v1/todo" TodoService;
+
+csharp
+{
+    public record TodoItem(Guid Id, string Description);
+
+    private static readonly IList<TodoItem> todoItems = new List<TodoItem>();
+
+    private static int FindIndexById(Guid itemId)
+    {
+        var index = -1;
+
+        for (var i = 0; i < todoItems.Count; i++)
+        {
+            if (todoItems[i].Id == itemId)
+            {
+                index = i;
+                break;
+            }
+        }
+
+        return index;
+    }
+}
+
+get Ok (query int limit = 10, query int skip = 0)
+{
+    return Ok(todoItems.Skip(skip).Take(limit));
+}
+
+get "{itemId}" Ok | NotFound (route Guid itemId)
+{
+    var index = FindIndexById(itemId);
+    
+    if (index < 0)
+    {
+        // Item with the ID not found, return a not found error response.
+        return NotFound($"TODO Item with ID: {itemId} not found.");
+    }
+    
+    return Ok(todoItems[index]);
+}
+
+post Ok (body TodoItem newItem)
+{
+    todoItems.Add(newItem);
+    
+    return Ok();
+}
+
+put "{itemId}" Ok | NotFound  (
+    route Guid itemId,
+    body TodoItem updateItem)
+{
+    var index = FindIndexById(itemId);
+    
+    if (index < 0)
+    {
+        // Item with the ID not found, return a not found error response.
+        return NotFound($"TODO Item with ID: {itemId} not found.");
+    }
+    
+    todoItems[index] = updateItem with { Id = itemId };
+    
+    return Ok();
+}
+
+delete "{itemId}" NoContent | NotFound (route Guid itemId)
+{
+    var index = FindIndexById(itemId);
+    
+    if (index < 0)
+    {
+        // Item with the ID not found, return a not found error response.
+        return NotFound($"TODO Item with ID: {itemId} not found.");
+    }
+    
+    todoItems.RemoveAt(index);
+    
+    return NoContent();
+}

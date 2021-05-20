@@ -1,0 +1,6 @@
+service HelloWorldService;
+
+get Ok ()
+{
+    return Ok("Hello World for Express.NET!");
+}
