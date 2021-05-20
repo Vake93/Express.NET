@@ -10,8 +10,8 @@ namespace Express.Reference.Assemblies
         private static Stream GetResourceStream(string name)
         {
             var assembly = typeof(ResourceLoader).GetTypeInfo().Assembly;
-
             var stream = assembly.GetManifestResourceStream(name);
+
             if (stream == null)
             {
                 throw new InvalidOperationException($"Resource '{name}' not found in {assembly.FullName}.");
@@ -22,16 +22,13 @@ namespace Express.Reference.Assemblies
 
         private static byte[] GetResourceBlob(string name)
         {
-            using (var stream = GetResourceStream(name))
-            {
-                var bytes = new byte[stream.Length];
-                using (var memoryStream = new MemoryStream(bytes))
-                {
-                    stream.CopyTo(memoryStream);
-                }
+            using var stream = GetResourceStream(name);
+            var bytes = new byte[stream.Length];
 
-                return bytes;
-            }
+            using var memoryStream = new MemoryStream(bytes);
+            stream.CopyTo(memoryStream);
+
+            return bytes;
         }
 
         public static byte[] GetOrCreateResource(ref byte[]? resource, string name)
@@ -48,13 +45,10 @@ namespace Express.Reference.Assemblies
         {
             if (resource == null)
             {
-                using (var stream = GetResourceStream(name))
-                {
-                    using (var streamReader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true))
-                    {
-                        resource = streamReader.ReadToEnd();
-                    }
-                }
+                var stream = GetResourceStream(name);
+                var streamReader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
+
+                resource = streamReader.ReadToEnd();
             }
 
             return resource;
