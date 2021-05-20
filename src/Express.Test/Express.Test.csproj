@@ -20,6 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Express.Net\Express.Net.csproj" />
+    <ProjectReference Include="..\Express.Reference.Assemblies\Express.Reference.Assemblies.csproj" />
   </ItemGroup>
 
 </Project>

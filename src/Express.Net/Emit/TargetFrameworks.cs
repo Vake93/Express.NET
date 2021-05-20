@@ -14,7 +14,7 @@ namespace Express.Net.Emit
             "net5.0",
             "Microsoft.AspNetCore.App",
             "5.0.0",
-            Aspaspnet50.All);
+            AspNet50.All);
 
         public static TargetFramework NetCore50 => _netCore50;
 

@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
-using Microsoft.CodeAnalysis;
+﻿  // This is a generated file, please edit Generate.ps1 to change the contents
 
-namespace Express.Reference.Assemblies
-{
+  using System.Collections.Generic;
+  using Microsoft.CodeAnalysis;
+
+  namespace Express.Reference.Assemblies
+  {
     internal static class Net50Resources
     {
         private static byte[]? _MicrosoftCSharp;
@@ -464,7 +466,7 @@ namespace Express.Reference.Assemblies
         public static PortableExecutableReference SystemXmlXPath { get; } = AssemblyMetadata.CreateFromImage(Net50Resources.SystemXmlXPath).GetReference(filePath: "System.Xml.XPath.dll", display: "System.Xml.XPath (net50)");
         public static PortableExecutableReference SystemXmlXPathXDocument { get; } = AssemblyMetadata.CreateFromImage(Net50Resources.SystemXmlXPathXDocument).GetReference(filePath: "System.Xml.XPath.XDocument.dll", display: "System.Xml.XPath.XDocument (net50)");
         public static PortableExecutableReference WindowsBase { get; } = AssemblyMetadata.CreateFromImage(Net50Resources.WindowsBase).GetReference(filePath: "WindowsBase.dll", display: "WindowsBase (net50)");
-        public static IEnumerable<PortableExecutableReference> All { get; } = new PortableExecutableReference[]
+        public static IEnumerable<PortableExecutableReference> All { get; }= new PortableExecutableReference[]
         {
             MicrosoftCSharp,
             MicrosoftVisualBasicCore,
