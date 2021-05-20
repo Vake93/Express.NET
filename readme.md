@@ -4,7 +4,7 @@ Express.NET is a DSL for build fast web services effortlessly.
 
 **This is my MSc Project.**
 
-### Below is a simple Hello World Web service in Express.NET.
+### Below is a simple Hello World Web service in Express.NET
 
 ```
 service "hello" HelloWorldService;
@@ -20,21 +20,21 @@ get "{name}" Ok (route string name)
 }
 ```
 
-## Still this is work in progress. Things Todo:
+## Still this is work in progress. Things Todo
 
-- Better diagnostic messages.
-- Add a concept of a project file.
-- Add a way to add NuGet packagers to a project.
-- VSCode debugger.
+- [ ] Better diagnostic messages.
+- [ ] Add a concept of a project file.
+- [ ] Add a way to add NuGet packagers to a project.
+- [ ] VSCode debugger.
 
-## Attributions:
-- ### Roslyn
+## Attributions
+- #### Roslyn
     - https://github.com/dotnet/roslyn
-- ### Minsk
+- #### Minsk
     - https://github.com/terrajobst/minsk
-- ### Basic Reference Assemblies
+- #### Basic Reference Assemblies
     - https://github.com/jaredpar/basic-reference-assemblies
-- ### Roslyn Quoter
+- #### Roslyn Quoter
     - https://github.com/KirillOsenkov/RoslynQuoter
-- ### uController
+- #### uController
     - https://github.com/davidfowl/uController
