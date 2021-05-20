@@ -1,6 +1,7 @@
 # Express.NET
 
 Express.NET is a DSL for build fast web services effortlessly.
+This builds on top of .NET / ASP.NET 5.
 
 **This is my MSc Project.**
 
@@ -24,8 +25,13 @@ get "{name}" Ok (route string name)
 
 - [ ] Better diagnostic messages.
 - [ ] Add a concept of a project file.
+- [ ] OpenAPI specification auto generation.
+- [ ] Swagger support.
+- [ ] VSCode debugger using pdb files. 
+- [ ] Write documentation on DSL syntax.
 - [ ] Add a way to add NuGet packagers to a project.
-- [ ] VSCode debugger.
+- [ ] Easy database integrations.
+- [ ] Target .NET 6.
 
 ## Attributions
 - #### Roslyn
