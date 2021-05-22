@@ -42,6 +42,14 @@ namespace Express.Build.Commands
                 Path.Combine(projectFolder, "bin", configuration) :
                 settings.Output;
 
+            var projectFile = SourceFileDiscovery.GetProjectFileInDirectory(projectFolder);
+
+            if (string.IsNullOrEmpty(projectFile))
+            {
+                AnsiConsole.WriteLine("No project file found.");
+                return -1;
+            }
+
             output = Path.GetFullPath(output);
 
             if (!Directory.Exists(output))
@@ -49,7 +57,8 @@ namespace Express.Build.Commands
                 Directory.CreateDirectory(output);
             }
 
-            var projectName = Path.GetFileName(projectFolder);
+            var projectName = Path.GetFileNameWithoutExtension(projectFile);
+            var sourceFiles = SourceFileDiscovery.GetSourceFilesInDirectory(projectFolder);
 
             AnsiConsole.WriteLine($"Build starting for {projectName}");
 
@@ -57,7 +66,6 @@ namespace Express.Build.Commands
                 .SetTargetFrameworks(TargetFrameworks.NetCore50, TargetFrameworks.AspNetCore50)
                 .SetBootstrapper(BasicBootstrapper.Instance);
 
-            var sourceFiles = SourceFileDiscovery.GetSourceFilesInDirectory(projectFolder);
             var syntaxTrees = new SyntaxTree[sourceFiles.Length];
 
             for (var i = 0; i < sourceFiles.Length; i++)
