@@ -8,6 +8,8 @@ app.Configure(config =>
     config.AddCommand<BuildCommand>("build");
 
     config.AddCommand<RunCommand>("run");
+
+    config.AddCommand<NewCommand>("new");
 });
 
 app.Run(args);

@@ -1,4 +1,5 @@
 ﻿using Express.Net.Emit;
+using Express.Net.Models;
 using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
@@ -7,14 +8,11 @@ namespace Express.Build.Services
 {
     internal static class RuntimeConfigBuilder
     {
-        private static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
+        private static readonly JsonSerializerOptions _jsonSerializerOptions = new ()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = true,
         };
-
-        private record Framework(string Name, string Version);
-
-        private record RuntimeOptions(string Tfm, Framework Framework, Dictionary<string, object> ConfigProperties);
 
         public static void BuildRuntimeConfig(
             string projectName,
