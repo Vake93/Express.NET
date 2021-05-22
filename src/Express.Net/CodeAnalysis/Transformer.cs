@@ -3,7 +3,6 @@ using Express.Net.CodeAnalysis.Syntax;
 using Express.Net.CodeAnalysis.Syntax.Nodes;
 using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using CSharp = Microsoft.CodeAnalysis.CSharp;
 using CSharpSyntax = Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -14,10 +13,12 @@ namespace Express.Net.CodeAnalysis
     internal sealed class Transformer
     {
         private readonly SyntaxTree _syntaxTree;
+        private readonly string _projectName;
 
-        public Transformer(SyntaxTree syntaxTree)
+        public Transformer(SyntaxTree syntaxTree, string projectName)
         {
             Diagnostics = new DiagnosticBag();
+            _projectName = projectName;
             _syntaxTree = syntaxTree;
         }
 
@@ -277,13 +278,20 @@ namespace Express.Net.CodeAnalysis
 
             var methodName = string.IsNullOrEmpty(route) ?
                 $"{endpointDeclaration.HttpVerbKeyword.Text}" :
-                $"{endpointDeclaration.HttpVerbKeyword.Text}{route}";
+                $"{endpointDeclaration.HttpVerbKeyword.Text} {route}";
 
-            methodName = Constants.MethodNameRegex.Replace(methodName, Constants.Space);
-            methodName = CultureInfo.InvariantCulture.TextInfo.ToTitleCase(methodName);
+            methodName = Constants.NameRegex.Replace(methodName, Constants.Space);
             methodName = methodName.Replace(Constants.Space, Constants.Empty).Trim();
 
             return $"__{methodName}{index}{sufix}";
+        }
+
+        private static string BuildServiceNamespaceName(string projectName)
+        {
+            projectName = Constants.NameRegex.Replace(projectName, Constants.Space);
+            projectName = projectName.Replace(Constants.Space, Constants.Empty).Trim();
+
+            return $"{projectName}.{Constants.ControllerNamespace}";
         }
 
         private static CSharpSyntax.CompilationUnitSyntax NormalizeWhitespace(CSharpSyntax.CompilationUnitSyntax compilationUnit)
@@ -339,7 +347,7 @@ namespace Express.Net.CodeAnalysis
                 .WithMembers(BuildClassMembersList(_syntaxTree.Root));
 
             var namespaceDeclaration = (CSharpSyntax.MemberDeclarationSyntax)CSharp.SyntaxFactory
-                .NamespaceDeclaration(CSharp.SyntaxFactory.ParseName(Constants.ControllerNamespace))
+                .NamespaceDeclaration(CSharp.SyntaxFactory.ParseName(BuildServiceNamespaceName(_projectName)))
                 .WithMembers(CSharp.SyntaxFactory.SingletonList(classDeclaration));
 
             return compilationUnit.WithMembers(CSharp.SyntaxFactory.SingletonList(namespaceDeclaration));

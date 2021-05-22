@@ -77,9 +77,9 @@ namespace Express.Net.CodeAnalysis
             return tokens.ToImmutableArray();
         }
 
-        public CSharpSyntaxTree Transform(out DiagnosticBag diagnostics)
+        public CSharpSyntaxTree Transform(string projectName, out DiagnosticBag diagnostics)
         {
-            var transformer = new Transformer(this);
+            var transformer = new Transformer(this, projectName);
             var csharpSyntaxTree = transformer.Transform();
 
             diagnostics = transformer.Diagnostics;

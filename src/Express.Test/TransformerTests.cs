@@ -26,7 +26,7 @@ namespace ProjectName.Controllers
     public class HelloWorldService : ControllerBase
     {
         [HttpGet]
-        public IActionResult __Get0()
+        public IActionResult __get0()
         {
             return Ok(""Hello World!"");
         }
@@ -36,7 +36,7 @@ namespace ProjectName.Controllers
 
             Assert.Empty(syntaxTree.Diagnostics);
 
-            var transformedSyntaxTree = syntaxTree.Transform(out _);
+            var transformedSyntaxTree = syntaxTree.Transform("ProjectName", out _);
 
             Assert.Empty(syntaxTree.Diagnostics);
             Assert.Empty(transformedSyntaxTree.GetDiagnostics());
@@ -68,7 +68,7 @@ namespace ProjectName.Controllers
     public class HelloWorldService : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> __Get0Async()
+        public async Task<IActionResult> __get0Async()
         {
             await Task.Delay(10);
             return Ok(""Hello World!"");
@@ -79,7 +79,7 @@ namespace ProjectName.Controllers
 
             Assert.Empty(syntaxTree.Diagnostics);
 
-            var transformedSyntaxTree = syntaxTree.Transform(out _);
+            var transformedSyntaxTree = syntaxTree.Transform("ProjectName", out _);
 
             Assert.Empty(syntaxTree.Diagnostics);
             Assert.Empty(transformedSyntaxTree.GetDiagnostics());
@@ -211,7 +211,7 @@ delete ""{itemId}"" NoContentResult | NotFoundObjectResult (route Guid itemId)
 
             Assert.Empty(syntaxTree.Diagnostics);
 
-            var transformedSyntaxTree = syntaxTree.Transform(out _);
+            var transformedSyntaxTree = syntaxTree.Transform("ProjectName", out _);
 
             Assert.Empty(syntaxTree.Diagnostics);
             Assert.Empty(transformedSyntaxTree.GetDiagnostics());

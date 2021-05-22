@@ -138,7 +138,7 @@ namespace Express.Net
             for (var i = 0; i < csharpSyntaxTrees.Length; i++)
             {
                 var _syntaxTree = _syntaxTrees[i];
-                csharpSyntaxTrees[i] = _syntaxTree.Transform(out var transformDiagnostics);
+                csharpSyntaxTrees[i] = _syntaxTree.Transform(_projectName, out var transformDiagnostics);
 
                 if (transformDiagnostics.Any())
                 {

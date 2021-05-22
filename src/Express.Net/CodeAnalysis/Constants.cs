@@ -4,7 +4,7 @@ namespace Express.Net.CodeAnalysis
 {
     internal static class Constants
     {
-        public static readonly Regex MethodNameRegex = new (@"[^\p{Ll}\p{Lu}\p{Lt}\p{Lo}\p{Nd}\p{Nl}\p{Mn}\p{Mc}\p{Cf}\p{Pc}\p{Lm}]");
+        public static readonly Regex NameRegex = new (@"[^\p{Ll}\p{Lu}\p{Lt}\p{Lo}\p{Nd}\p{Nl}\p{Mn}\p{Mc}\p{Cf}\p{Pc}\p{Lm}]");
 
         public const string SyntaxParserTempClass = "class c__SyntaxParser";
         public const string EmptyStringValue = @"""""";
@@ -15,7 +15,7 @@ namespace Express.Net.CodeAnalysis
 
         public const string MvcNamespace = "Microsoft.AspNetCore.Mvc";
         public const string TaskNamespace = "System.Threading.Tasks";
-        public const string ControllerNamespace = "ProjectName.Controllers";
+        public const string ControllerNamespace = "Controllers";
 
         public const string ControllerBaseClass = "ControllerBase";
 
