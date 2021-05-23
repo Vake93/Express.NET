@@ -334,14 +334,157 @@ delete ""{itemId}"" NoContentResult | NotFoundObjectResult (route Guid itemId)
     return NoContent();
 }".Trim();
 
-            var syntaxTree = SyntaxTree.Parse(text);
+            var csharpCode = @"
+using System;
+using System.Linq;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+
+namespace ProjectName.Controllers
+{
+    [ApiController, Route(""api/v1/todo"")]
+#line 1 ""Filename.en""
+    public class TodoService : ControllerBase
+    {
+#line 10
+        public record TodoItem(Guid Id, string Description);
+#line 12
+        private static readonly IList<TodoItem> todoItems = new List<TodoItem>()
+#line 13
+        {
+#line 14
+        new(Guid.NewGuid(), ""Test Item 1""), 
+#line 15
+        new(Guid.NewGuid(), ""Test Item 2""), 
+#line 16
+        new(Guid.NewGuid(), ""Test Item 3""), 
+#line 17
+        new(Guid.NewGuid(), ""Test Item 4""), 
+#line 18
+        new(Guid.NewGuid(), ""Test Item 5""), 
+#line 19
+        };
+#line 21
+        private static int FindIndexById(Guid itemId)
+#line 22
+        {
+#line 23
+            var index = -1;
+#line 25
+            for (var i = 0; i < todoItems.Count; i++)
+#line 26
+            {
+#line 27
+                if (todoItems[i].Id == itemId)
+#line 28
+                {
+#line 29
+                    index = i;
+#line 30
+                    break;
+#line 31
+                }
+#line 32
+            }
+
+#line 34
+            return index;
+#line 35
+        }
+
+        [HttpGet]
+#line 43
+        public IActionResult __get0([FromQuery] int limit = 10, [FromQuery] int skip = 0)
+        {
+#line 45
+            return Ok(todoItems.Skip(skip).Take(limit));
+        }
+
+        [HttpGet(""{itemId}"")]
+#line 52
+        public IActionResult __getitemId1([FromRoute] Guid itemId)
+        {
+#line 54
+            var index = FindIndexById(itemId);
+#line 56
+            if (index < 0)
+#line 57
+            {
+#line 59
+                return NotFound($""TODO Item with ID: {itemId} not found."");
+#line 60
+            }
+
+#line 62
+            return Ok(todoItems[index]);
+        }
+
+        [HttpPost]
+#line 68
+        public IActionResult __post2([FromBody] TodoItem newItem)
+        {
+#line 70
+            todoItems.Add(newItem);
+#line 72
+            return Ok();
+        }
+
+        [HttpPut(""{itemId}"")]
+#line 79
+        public IActionResult __putitemId3([FromRoute] Guid itemId, [FromBody] TodoItem updateItem)
+        {
+#line 83
+            var index = FindIndexById(itemId);
+#line 85
+            if (index < 0)
+#line 86
+            {
+#line 88
+                return NotFound($""TODO Item with ID: {itemId} not found."");
+#line 89
+            }
+
+#line 91
+            todoItems[index] = updateItem with {Id = itemId};
+#line 93
+            return Ok();
+        }
+
+        [HttpDelete(""{itemId}"")]
+#line 100
+        public IActionResult __deleteitemId4([FromRoute] Guid itemId)
+        {
+#line 102
+            var index = FindIndexById(itemId);
+#line 104
+            if (index < 0)
+#line 105
+            {
+#line 107
+                return NotFound($""TODO Item with ID: {itemId} not found."");
+#line 108
+            }
+
+#line 110
+            todoItems.RemoveAt(index);
+#line 112
+            return NoContent();
+        }
+    }
+}".Trim();
+
+            var syntaxTree = SyntaxTree.Parse(text, "Filename.en");
 
             Assert.Empty(syntaxTree.Diagnostics);
 
-            var transformedSyntaxTree = syntaxTree.Transform("ProjectName", false, out _);
+            var transformedSyntaxTree = syntaxTree.Transform("ProjectName", true, out _);
 
             Assert.Empty(syntaxTree.Diagnostics);
             Assert.Empty(transformedSyntaxTree.GetDiagnostics());
+
+            var generatedCode = transformedSyntaxTree.ToString();
+            Assert.Equal(csharpCode, generatedCode);
         }
     }
 
