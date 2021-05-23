@@ -85,7 +85,6 @@ namespace Express.Net
                 Path.Combine(_output, assemblyName),
                 Path.Combine(_output, pdbName));
 
-
             foreach (var diagnostic in result.Diagnostics)
             {
                 diagnostics.Add(Diagnostic.FromCSharpDiagnostic(diagnostic));
