@@ -60,14 +60,14 @@ namespace Express.Net
                 return new EmitResult(false, diagnostics.ToImmutable());
             }
 
-            var csharpSyntaxTrees = TransformSyntaxTrees(diagnostics, ref exit);
+            var configuration = ParseConfiguration();
+            var csharpSyntaxTrees = TransformSyntaxTrees(diagnostics, configuration, ref exit);
 
             if (exit)
             {
                 return new EmitResult(false, diagnostics.ToImmutable());
             }
 
-            var configuration = ParseConfiguration();
             var references = BuildReferences();
             var assemblyName = $"{_projectName}.dll";
             var pdbName = $"{_projectName}.pdb";
@@ -131,14 +131,15 @@ namespace Express.Net
             return exit;
         }
 
-        private CSharpSyntaxTree[] TransformSyntaxTrees(ImmutableArray<Diagnostic>.Builder diagnostics, ref bool exit)
+        private CSharpSyntaxTree[] TransformSyntaxTrees(ImmutableArray<Diagnostic>.Builder diagnostics, OptimizationLevel configuration, ref bool exit)
         {
             var csharpSyntaxTrees = new CSharpSyntaxTree[_syntaxTrees!.Length];
 
             for (var i = 0; i < csharpSyntaxTrees.Length; i++)
             {
                 var _syntaxTree = _syntaxTrees[i];
-                csharpSyntaxTrees[i] = _syntaxTree.Transform(_projectName, out var transformDiagnostics);
+                var addDebugInfo = configuration == OptimizationLevel.Debug;
+                csharpSyntaxTrees[i] = _syntaxTree.Transform(_projectName, addDebugInfo, out var transformDiagnostics);
 
                 if (transformDiagnostics.Any())
                 {

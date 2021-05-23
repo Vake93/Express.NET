@@ -16,15 +16,18 @@ namespace Express.Net.CodeAnalysis
 
         private delegate void ParseHandler(SyntaxTree syntaxTree, out CompilationUnitSyntax root, out ImmutableArray<Diagnostic> diagnostics);
 
-        private SyntaxTree(SourceText text, ParseHandler handler)
+        private SyntaxTree(SourceText text, ParseHandler handler, string? fileName = null)
         {
             Text = text;
 
             handler(this, out var root, out var diagnostics);
 
             Diagnostics = new DiagnosticBag(diagnostics);
+            FileName = fileName;
             Root = root;
         }
+
+        public string? FileName { get; init; }
 
         public SourceText Text { get; init; }
 
@@ -35,12 +38,13 @@ namespace Express.Net.CodeAnalysis
         public static SyntaxTree FromFile(string filepath)
         {
             var text = File.ReadAllText(filepath);
-            return Parse(text);
+            var fileName = Path.GetFileName(filepath);
+            return Parse(text, fileName);
         }
 
-        public static SyntaxTree Parse(string text) => Parse(SourceText.From(text));
+        public static SyntaxTree Parse(string text, string? fileName = null) => Parse(SourceText.From(text), fileName);
 
-        public static SyntaxTree Parse(SourceText text) => new (text, Parse);
+        public static SyntaxTree Parse(SourceText text, string? fileName = null) => new (text, Parse, fileName);
 
         public static ImmutableArray<SyntaxToken> ParseTokens(string text, out ImmutableArray<Diagnostic> diagnostics, bool includeEndOfFile = false)
         {
@@ -77,9 +81,9 @@ namespace Express.Net.CodeAnalysis
             return tokens.ToImmutableArray();
         }
 
-        public CSharpSyntaxTree Transform(string projectName, out DiagnosticBag diagnostics)
+        public CSharpSyntaxTree Transform(string projectName, bool addDebugInfo, out DiagnosticBag diagnostics)
         {
-            var transformer = new Transformer(this, projectName);
+            var transformer = new Transformer(this, projectName, addDebugInfo);
             var csharpSyntaxTree = transformer.Transform();
 
             diagnostics = transformer.Diagnostics;

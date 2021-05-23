@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using CSharp = Microsoft.CodeAnalysis.CSharp;
 using CSharpSyntax = Microsoft.CodeAnalysis.CSharp.Syntax;
+using CSharpSyntaxSyntaxNode = Microsoft.CodeAnalysis.SyntaxNode;
 using CSharpSyntaxTree = Microsoft.CodeAnalysis.SyntaxTree;
+using SyntaxNode = Express.Net.CodeAnalysis.Syntax.Nodes.SyntaxNode;
 
 namespace Express.Net.CodeAnalysis
 {
@@ -14,10 +16,12 @@ namespace Express.Net.CodeAnalysis
     {
         private readonly SyntaxTree _syntaxTree;
         private readonly string _projectName;
+        private readonly bool _addDebugInfo;
 
-        public Transformer(SyntaxTree syntaxTree, string projectName)
+        public Transformer(SyntaxTree syntaxTree, string projectName, bool addDebugInfo = false)
         {
             Diagnostics = new DiagnosticBag();
+            _addDebugInfo = addDebugInfo;
             _projectName = projectName;
             _syntaxTree = syntaxTree;
         }
@@ -33,59 +37,6 @@ namespace Express.Net.CodeAnalysis
             compilationUnit = NormalizeWhitespace(compilationUnit);
 
             return CSharp.SyntaxFactory.SyntaxTree(compilationUnit);
-        }
-
-        private static SyntaxList<CSharpSyntax.MemberDeclarationSyntax> BuildClassMembersList(CompilationUnitSyntax compilationUnit)
-        {
-            var members = new List<CSharpSyntax.MemberDeclarationSyntax>();
-
-            var csharpCodeBlock = compilationUnit.Members.OfType<CSharpBlockSyntax>();
-
-            if (csharpCodeBlock.Any())
-            {
-                var codeBlockMembers = csharpCodeBlock
-                    .SelectMany(cb => cb.Members)
-                    .Select(m => m.CSharpStatement)
-                    .OfType<CSharpSyntax.MemberDeclarationSyntax>();
-
-                members.AddRange(codeBlockMembers);
-            }
-
-            var endpointDeclarations = compilationUnit.Members.OfType<EndpointDeclarationSyntax>();
-            var index = 0;
-
-            foreach (var endpointDeclaration in endpointDeclarations)
-            {
-                var httpKeyword = endpointDeclaration.HttpVerbKeyword;
-                var kind = httpKeyword.Kind;
-                var route = endpointDeclaration.Route.Text;
-                var attributeList = endpointDeclaration.AttributeList;
-                var parameterList = endpointDeclaration.ParametersList;
-
-                var modifiers = endpointDeclaration.AsyncCode ?
-                    BuildTokenList(CSharp.SyntaxKind.PublicKeyword, CSharp.SyntaxKind.AsyncKeyword) :
-                    BuildTokenList(CSharp.SyntaxKind.PublicKeyword);
-
-                var returnType = endpointDeclaration.AsyncCode ?
-                    CSharp.SyntaxFactory.ParseTypeName(Constants.AsyncEndpointDeclarationReturnType) :
-                    CSharp.SyntaxFactory.ParseTypeName(Constants.SyncEndpointDeclarationReturnType);
-
-                var statements = endpointDeclaration.Statements
-                    .Select(s => s.CSharpStatement)
-                    .OfType<CSharpSyntax.StatementSyntax>();
-
-                var methodDeclaration = CSharp.SyntaxFactory
-                    .MethodDeclaration(returnType, BuildMethodName(endpointDeclaration, index))
-                    .WithModifiers(modifiers)
-                    .WithParameterList(BuildParameterList(parameterList))
-                    .WithAttributeLists(BuildAttributeLists(attributeList, kind, route))
-                    .WithBody(CSharp.SyntaxFactory.Block(statements));
-
-                members.Add(methodDeclaration);
-                index++;
-            }
-
-            return CSharp.SyntaxFactory.List(members);
         }
 
         private static SyntaxList<CSharpSyntax.AttributeListSyntax> BuildAttributeLists(AttributeListSyntax? attributeList, SyntaxKind syntaxKind, string? route = null)
@@ -339,18 +290,121 @@ namespace Express.Net.CodeAnalysis
             var serviceAttributeList = serviceDeclaration.AttributeList;
             var serviceRoute = serviceDeclaration.Route.Text;
 
-            var classDeclaration = (CSharpSyntax.MemberDeclarationSyntax)CSharp.SyntaxFactory
+            var classDeclaration = CSharp.SyntaxFactory
                 .ClassDeclaration(serviceDeclaration.Identifier.Text)
                 .WithModifiers(BuildTokenList(CSharp.SyntaxKind.PublicKeyword))
-                .WithBaseList(BuildBaseClassList(Constants.ControllerBaseClass))
+                .WithBaseList(BuildBaseClassList(Constants.ControllerBaseClass));
+
+            if (_addDebugInfo)
+            {
+                classDeclaration = AddDebugInfo(serviceDeclaration, classDeclaration);
+            }
+
+            classDeclaration = classDeclaration
                 .WithAttributeLists(BuildAttributeLists(serviceAttributeList, serviceDeclaration.Kind, serviceRoute))
                 .WithMembers(BuildClassMembersList(_syntaxTree.Root));
 
             var namespaceDeclaration = (CSharpSyntax.MemberDeclarationSyntax)CSharp.SyntaxFactory
                 .NamespaceDeclaration(CSharp.SyntaxFactory.ParseName(BuildServiceNamespaceName(_projectName)))
-                .WithMembers(CSharp.SyntaxFactory.SingletonList(classDeclaration));
+                .WithMembers(CSharp.SyntaxFactory.SingletonList<CSharpSyntax.MemberDeclarationSyntax>(classDeclaration));
 
             return compilationUnit.WithMembers(CSharp.SyntaxFactory.SingletonList(namespaceDeclaration));
+        }
+
+        private SyntaxList<CSharpSyntax.MemberDeclarationSyntax> BuildClassMembersList(CompilationUnitSyntax compilationUnit)
+        {
+            var members = new List<CSharpSyntax.MemberDeclarationSyntax>();
+
+            var csharpCodeBlock = compilationUnit.Members.OfType<CSharpBlockSyntax>();
+            var codeBlockMembers = csharpCodeBlock.SelectMany(cb => cb.Members);
+
+            if (codeBlockMembers.Any())
+            {
+                foreach (var codeBlockMember in codeBlockMembers)
+                {
+                    if (codeBlockMember.CSharpStatement is not CSharpSyntax.MemberDeclarationSyntax csharpMemberDeclaration)
+                    {
+                        continue;
+                    }
+
+                    if (_addDebugInfo)
+                    {
+                        csharpMemberDeclaration = AddDebugInfo(codeBlockMember, csharpMemberDeclaration);
+                    }
+
+                    members.Add(csharpMemberDeclaration);
+                }
+            }
+
+            var endpointDeclarations = compilationUnit.Members.OfType<EndpointDeclarationSyntax>();
+            var index = 0;
+
+            foreach (var endpointDeclaration in endpointDeclarations)
+            {
+                var httpKeyword = endpointDeclaration.HttpVerbKeyword;
+                var kind = httpKeyword.Kind;
+                var route = endpointDeclaration.Route.Text;
+                var attributeList = endpointDeclaration.AttributeList;
+                var parameterList = endpointDeclaration.ParametersList;
+
+                var modifiers = endpointDeclaration.AsyncCode ?
+                    BuildTokenList(CSharp.SyntaxKind.PublicKeyword, CSharp.SyntaxKind.AsyncKeyword) :
+                    BuildTokenList(CSharp.SyntaxKind.PublicKeyword);
+
+                var returnType = endpointDeclaration.AsyncCode ?
+                    CSharp.SyntaxFactory.ParseTypeName(Constants.AsyncEndpointDeclarationReturnType) :
+                    CSharp.SyntaxFactory.ParseTypeName(Constants.SyncEndpointDeclarationReturnType);
+
+                var methodDeclaration = CSharp.SyntaxFactory
+                    .MethodDeclaration(returnType, BuildMethodName(endpointDeclaration, index))
+                    .WithModifiers(modifiers)
+                    .WithParameterList(BuildParameterList(parameterList));
+
+                if (_addDebugInfo)
+                {
+                    methodDeclaration = AddDebugInfo(endpointDeclaration, methodDeclaration);
+                }
+
+                var statements = new List<CSharpSyntax.StatementSyntax>();
+
+                foreach (var statement in endpointDeclaration.Statements)
+                {
+                    if (statement.CSharpStatement is not CSharpSyntax.StatementSyntax csharpStatement)
+                    {
+                        continue;
+                    }
+
+                    if (_addDebugInfo)
+                    {
+                        csharpStatement = AddDebugInfo(statement, csharpStatement);
+                    }
+
+                    statements.Add(csharpStatement);
+                }
+
+                methodDeclaration = methodDeclaration
+                    .WithAttributeLists(BuildAttributeLists(attributeList, kind, route))
+                    .WithBody(CSharp.SyntaxFactory.Block(statements));
+
+                members.Add(methodDeclaration);
+                index++;
+            }
+
+            return CSharp.SyntaxFactory.List(members);
+        }
+
+        private T AddDebugInfo<T>(SyntaxNode syntaxNode, T csharpSyntaxSyntaxNode)
+            where T : CSharpSyntaxSyntaxNode
+        {
+            // Line directive index starts at 1
+            var lineNumber = syntaxNode.Location.StartLine + 1;
+
+            var leadingTrivia = CSharp.SyntaxFactory.Trivia(
+                CSharp.SyntaxFactory.LineDirectiveTrivia(
+                    CSharp.SyntaxFactory.Literal(lineNumber),
+                    CSharp.SyntaxFactory.Literal(_syntaxTree.FileName ?? string.Empty), true));
+
+            return csharpSyntaxSyntaxNode.WithLeadingTrivia(leadingTrivia);
         }
     }
 }

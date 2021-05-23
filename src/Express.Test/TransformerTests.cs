@@ -36,7 +36,7 @@ namespace ProjectName.Controllers
 
             Assert.Empty(syntaxTree.Diagnostics);
 
-            var transformedSyntaxTree = syntaxTree.Transform("ProjectName", out _);
+            var transformedSyntaxTree = syntaxTree.Transform("ProjectName", false, out _);
 
             Assert.Empty(syntaxTree.Diagnostics);
             Assert.Empty(transformedSyntaxTree.GetDiagnostics());
@@ -79,13 +79,135 @@ namespace ProjectName.Controllers
 
             Assert.Empty(syntaxTree.Diagnostics);
 
-            var transformedSyntaxTree = syntaxTree.Transform("ProjectName", out _);
+            var transformedSyntaxTree = syntaxTree.Transform("ProjectName", false, out _);
 
             Assert.Empty(syntaxTree.Diagnostics);
             Assert.Empty(transformedSyntaxTree.GetDiagnostics());
 
             var generatedCode = transformedSyntaxTree.ToString();
 
+            Assert.Equal(csharpCode, generatedCode);
+        }
+
+        [Fact]
+        public void TestBasicDebugInfomation()
+        {
+            var text = @"
+service HelloWorldService;
+
+get Ok ()
+{
+    return Ok(""Hello World"");
+}
+
+get ""{name}"" Ok (route string name)
+{
+	var message = $""Hello {name}"";
+    return Ok(message);
+}".Trim();
+
+            var csharpCode = @"
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+
+namespace ProjectName.Controllers
+{
+    [ApiController, Route("""")]
+#line 1 ""Filename.en""
+    public class HelloWorldService : ControllerBase
+    {
+        [HttpGet]
+#line 3 ""Filename.en""
+        public IActionResult __get0()
+        {
+#line 5 ""Filename.en""
+            return Ok(""Hello World"");
+        }
+
+        [HttpGet(""{name}"")]
+#line 8 ""Filename.en""
+        public IActionResult __getname1([FromRoute] string name)
+        {
+#line 10 ""Filename.en""
+            var message = $""Hello {name}"";
+#line 11 ""Filename.en""
+            return Ok(message);
+        }
+    }
+}".Trim();
+
+            var syntaxTree = SyntaxTree.Parse(text, "Filename.en");
+
+            Assert.Empty(syntaxTree.Diagnostics);
+
+            var transformedSyntaxTree = syntaxTree.Transform("ProjectName", true, out _);
+
+            Assert.Empty(syntaxTree.Diagnostics);
+            Assert.Empty(transformedSyntaxTree.GetDiagnostics());
+
+            var generatedCode = transformedSyntaxTree.ToString();
+            Assert.Equal(csharpCode, generatedCode);
+        }
+
+        [Fact]
+        public void TestCSBlockDebugInfomation()
+        {
+            var text = @"
+service HelloWorldService;
+
+csharp
+{
+    private readonly string _text;
+
+    public HelloWorldService()
+    {
+        _text = ""Hello World"";
+    }
+}
+
+get Ok ()
+{
+    return Ok(_text);
+}".Trim();
+
+            var csharpCode = @"
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
+
+namespace ProjectName.Controllers
+{
+    [ApiController, Route("""")]
+#line 1 ""Filename.en""
+    public class HelloWorldService : ControllerBase
+    {
+#line 5 ""Filename.en""
+        private readonly string _text;
+#line 7 ""Filename.en""
+        public HelloWorldService()
+        {
+            _text = ""Hello World"";
+        }
+
+        [HttpGet]
+#line 13 ""Filename.en""
+        public IActionResult __get0()
+        {
+#line 15 ""Filename.en""
+            return Ok(_text);
+        }
+    }
+}".Trim();
+
+            var syntaxTree = SyntaxTree.Parse(text, "Filename.en");
+
+            Assert.Empty(syntaxTree.Diagnostics);
+
+            var transformedSyntaxTree = syntaxTree.Transform("ProjectName", true, out _);
+
+            Assert.Empty(syntaxTree.Diagnostics);
+            Assert.Empty(transformedSyntaxTree.GetDiagnostics());
+
+            var generatedCode = transformedSyntaxTree.ToString();
             Assert.Equal(csharpCode, generatedCode);
         }
 
@@ -211,7 +333,7 @@ delete ""{itemId}"" NoContentResult | NotFoundObjectResult (route Guid itemId)
 
             Assert.Empty(syntaxTree.Diagnostics);
 
-            var transformedSyntaxTree = syntaxTree.Transform("ProjectName", out _);
+            var transformedSyntaxTree = syntaxTree.Transform("ProjectName", false, out _);
 
             Assert.Empty(syntaxTree.Diagnostics);
             Assert.Empty(transformedSyntaxTree.GetDiagnostics());
