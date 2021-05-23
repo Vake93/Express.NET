@@ -34,6 +34,7 @@ namespace Express.Net.CodeAnalysis
 
             compilationUnit = TransformUsingDirectiveSyntax(compilationUnit);
             compilationUnit = TransformServiceDeclarationSyntax(compilationUnit);
+            compilationUnit = NormalizeWhitespace(compilationUnit);
 
             return CSharp.SyntaxFactory.SyntaxTree(compilationUnit);
         }
@@ -242,6 +243,11 @@ namespace Express.Net.CodeAnalysis
             projectName = projectName.Replace(Constants.Space, Constants.Empty).Trim();
 
             return $"{projectName}.{Constants.ControllerNamespace}";
+        }
+
+        private static CSharpSyntax.CompilationUnitSyntax NormalizeWhitespace(CSharpSyntax.CompilationUnitSyntax compilationUnit)
+        {
+            return compilationUnit.NormalizeWhitespace();
         }
 
         private CSharpSyntax.CompilationUnitSyntax TransformUsingDirectiveSyntax(CSharpSyntax.CompilationUnitSyntax compilationUnit)
