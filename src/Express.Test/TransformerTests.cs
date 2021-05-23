@@ -1,4 +1,7 @@
-﻿using Xunit;
+﻿using Microsoft.CodeAnalysis;
+using Xunit;
+using CSharpSyntax = Microsoft.CodeAnalysis.CSharp.Syntax;
+using CSharpSyntaxTree = Microsoft.CodeAnalysis.SyntaxTree;
 using SyntaxTree = Express.Net.CodeAnalysis.SyntaxTree;
 
 namespace Express.Net.Tests
@@ -41,8 +44,7 @@ namespace ProjectName.Controllers
             Assert.Empty(syntaxTree.Diagnostics);
             Assert.Empty(transformedSyntaxTree.GetDiagnostics());
 
-            var generatedCode = transformedSyntaxTree.ToString();
-
+            var generatedCode = GenerateCode(transformedSyntaxTree);
             Assert.Equal(csharpCode, generatedCode);
         }
 
@@ -84,8 +86,7 @@ namespace ProjectName.Controllers
             Assert.Empty(syntaxTree.Diagnostics);
             Assert.Empty(transformedSyntaxTree.GetDiagnostics());
 
-            var generatedCode = transformedSyntaxTree.ToString();
-
+            var generatedCode = GenerateCode(transformedSyntaxTree);
             Assert.Equal(csharpCode, generatedCode);
         }
 
@@ -145,7 +146,7 @@ namespace ProjectName.Controllers
             Assert.Empty(syntaxTree.Diagnostics);
             Assert.Empty(transformedSyntaxTree.GetDiagnostics());
 
-            var generatedCode = transformedSyntaxTree.ToString();
+            var generatedCode = GenerateCode(transformedSyntaxTree);
             Assert.Equal(csharpCode, generatedCode);
         }
 
@@ -207,7 +208,7 @@ namespace ProjectName.Controllers
             Assert.Empty(syntaxTree.Diagnostics);
             Assert.Empty(transformedSyntaxTree.GetDiagnostics());
 
-            var generatedCode = transformedSyntaxTree.ToString();
+            var generatedCode = GenerateCode(transformedSyntaxTree);
             Assert.Equal(csharpCode, generatedCode);
         }
 
@@ -337,6 +338,13 @@ delete ""{itemId}"" NoContentResult | NotFoundObjectResult (route Guid itemId)
 
             Assert.Empty(syntaxTree.Diagnostics);
             Assert.Empty(transformedSyntaxTree.GetDiagnostics());
+        }
+
+        private static string GenerateCode(CSharpSyntaxTree transformedSyntaxTree)
+        {
+            var compilationUnit = Assert.IsAssignableFrom<CSharpSyntax.CompilationUnitSyntax>(transformedSyntaxTree.GetRoot());
+            var generatedCode = compilationUnit.NormalizeWhitespace().ToFullString();
+            return generatedCode;
         }
     }
 
