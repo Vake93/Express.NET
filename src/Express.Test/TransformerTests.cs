@@ -32,6 +32,7 @@ namespace ProjectName.Controllers
         }
     }
 }".Trim();
+
             var syntaxTree = SyntaxTree.Parse(code);
 
             Assert.Empty(syntaxTree.Diagnostics);
@@ -75,6 +76,7 @@ namespace ProjectName.Controllers
         }
     }
 }".Trim();
+
             var syntaxTree = SyntaxTree.Parse(code);
 
             Assert.Empty(syntaxTree.Diagnostics);
