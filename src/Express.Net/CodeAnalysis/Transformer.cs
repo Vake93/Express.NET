@@ -297,7 +297,7 @@ namespace Express.Net.CodeAnalysis
 
             if (_addDebugInfo)
             {
-                classDeclaration = AddDebugInfo(serviceDeclaration, classDeclaration);
+                classDeclaration = AddDebugInfo(serviceDeclaration, classDeclaration, addFile: true);
             }
 
             classDeclaration = classDeclaration
@@ -393,18 +393,55 @@ namespace Express.Net.CodeAnalysis
             return CSharp.SyntaxFactory.List(members);
         }
 
-        private T AddDebugInfo<T>(SyntaxNode syntaxNode, T csharpSyntaxSyntaxNode)
+        private T AddDebugInfo<T>(SyntaxNode syntaxNode, T csharpSyntaxSyntaxNode, bool addFile = false)
             where T : CSharpSyntaxSyntaxNode
         {
+            var endOfLineTriviaRawKind = (int)CSharp.SyntaxKind.EndOfLineTrivia;
+
             // Line directive index starts at 1
             var lineNumber = syntaxNode.Location.StartLine + 1;
 
-            var leadingTrivia = CSharp.SyntaxFactory.Trivia(
-                CSharp.SyntaxFactory.LineDirectiveTrivia(
-                    CSharp.SyntaxFactory.Literal(lineNumber),
-                    CSharp.SyntaxFactory.Literal(_syntaxTree.FileName ?? string.Empty), true));
+            var leadingTrivia = addFile ?
+                CSharp.SyntaxFactory.Trivia(
+                    CSharp.SyntaxFactory.LineDirectiveTrivia(
+                        CSharp.SyntaxFactory.Literal(lineNumber),
+                        CSharp.SyntaxFactory.Literal(_syntaxTree.FileName ?? string.Empty),
+                        true)) :
+                CSharp.SyntaxFactory.Trivia(
+                    CSharp.SyntaxFactory.LineDirectiveTrivia(
+                        CSharp.SyntaxFactory.Literal(lineNumber), true));
 
-            return csharpSyntaxSyntaxNode.WithLeadingTrivia(leadingTrivia);
+            csharpSyntaxSyntaxNode = csharpSyntaxSyntaxNode.WithLeadingTrivia(leadingTrivia);
+
+            if (syntaxNode.Location.StartLine != syntaxNode.Location.EndLine)
+            {
+                var count = csharpSyntaxSyntaxNode
+                    .DescendantTokens()
+                    .Where(t => t.TrailingTrivia.Any(tt => tt.RawKind == endOfLineTriviaRawKind))
+                    .Select(t => t.GetNextToken())
+                    .Count();
+
+                for (var i = 0; i < count; i++)
+                {
+                    var token = csharpSyntaxSyntaxNode
+                        .DescendantTokens()
+                        .Where(t => t.TrailingTrivia.Any(tt => tt.RawKind == endOfLineTriviaRawKind))
+                        .Select(t => (t.GetNextToken()))
+                        .Skip(i)
+                        .First();
+
+                    lineNumber += token.LeadingTrivia.Count(tt => tt.RawKind == endOfLineTriviaRawKind);
+
+                    var newToken = token.WithLeadingTrivia(
+                        CSharp.SyntaxFactory.Trivia(
+                            CSharp.SyntaxFactory.LineDirectiveTrivia(
+                                CSharp.SyntaxFactory.Literal(++lineNumber), true)));
+
+                    csharpSyntaxSyntaxNode = csharpSyntaxSyntaxNode.ReplaceToken(token, newToken);
+                }
+            }
+
+            return csharpSyntaxSyntaxNode;
         }
     }
 }

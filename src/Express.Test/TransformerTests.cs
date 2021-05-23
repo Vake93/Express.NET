@@ -117,20 +117,20 @@ namespace ProjectName.Controllers
     public class HelloWorldService : ControllerBase
     {
         [HttpGet]
-#line 3 ""Filename.en""
+#line 3
         public IActionResult __get0()
         {
-#line 5 ""Filename.en""
+#line 5
             return Ok(""Hello World"");
         }
 
         [HttpGet(""{name}"")]
-#line 8 ""Filename.en""
+#line 8
         public IActionResult __getname1([FromRoute] string name)
         {
-#line 10 ""Filename.en""
+#line 10
             var message = $""Hello {name}"";
-#line 11 ""Filename.en""
+#line 11
             return Ok(message);
         }
     }
@@ -161,7 +161,9 @@ csharp
 
     public HelloWorldService()
     {
+
         _text = ""Hello World"";
+
     }
 }
 
@@ -180,19 +182,22 @@ namespace ProjectName.Controllers
 #line 1 ""Filename.en""
     public class HelloWorldService : ControllerBase
     {
-#line 5 ""Filename.en""
+#line 5
         private readonly string _text;
-#line 7 ""Filename.en""
+#line 7
         public HelloWorldService()
+#line 8
         {
+#line 10
             _text = ""Hello World"";
+#line 12
         }
 
         [HttpGet]
-#line 13 ""Filename.en""
+#line 15
         public IActionResult __get0()
         {
-#line 15 ""Filename.en""
+#line 17
             return Ok(_text);
         }
     }
