@@ -24,10 +24,10 @@ get "{name}" Ok (route string name)
 ## Still this is work in progress. Things Todo
 
 - [ ] Better diagnostic messages.
-- [ ] Add a concept of a project file.
+- [x] Add a concept of a project file.
 - [ ] OpenAPI specification auto generation.
 - [ ] Swagger support.
-- [ ] VSCode debugger using pdb files. 
+- [x] VSCode debugger using pdb files. 
 - [ ] Write documentation on DSL syntax.
 - [ ] Add a way to add NuGet packagers to a project.
 - [ ] Easy database integrations.
