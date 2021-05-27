@@ -1,0 +1,9 @@
+{
+  "PackageReferences": [
+    {
+      "Name": "Newtonsoft.Json",
+      "Version": "13.0.1"
+    }
+  ],
+  "LibraryReferences": []
+}

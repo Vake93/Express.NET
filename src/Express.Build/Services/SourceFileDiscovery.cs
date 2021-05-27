@@ -7,7 +7,7 @@ namespace Express.Build.Services
     {
         public static string GetProjectFileInDirectory(string directory)
         {
-            return Directory.EnumerateFiles(directory, "*.en").FirstOrDefault() ?? string.Empty;
+            return Directory.EnumerateFiles(directory, "*.enproj").FirstOrDefault() ?? string.Empty;
         }
 
         public static string[] GetSourceFilesInDirectory(string directory)

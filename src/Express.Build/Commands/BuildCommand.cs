@@ -3,11 +3,16 @@ using Express.Net;
 using Express.Net.CodeAnalysis;
 using Express.Net.Emit;
 using Express.Net.Emit.Bootstrapping;
+using Express.Net.Models;
+using Express.Net.Models.NuGet;
+using Express.Net.Packages;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
+using System.Text.Json;
 
 namespace Express.Build.Commands
 {
@@ -34,6 +39,8 @@ namespace Express.Build.Commands
                 Directory.GetCurrentDirectory() :
                 settings.ProjectFolder.TrimEnd('\\', '/').Trim();
 
+            projectFolder = Path.GetFullPath(projectFolder);
+
             var configuration = string.IsNullOrEmpty(settings.Configuration) ?
                 "Debug" :
                 settings.Configuration;
@@ -41,6 +48,8 @@ namespace Express.Build.Commands
             var output = string.IsNullOrEmpty(settings.Output) ?
                 Path.Combine(projectFolder, "bin", configuration) :
                 settings.Output;
+
+            output = Path.GetFullPath(output);
 
             var projectFile = SourceFileDiscovery.GetProjectFileInDirectory(projectFolder);
 
@@ -50,7 +59,14 @@ namespace Express.Build.Commands
                 return -1;
             }
 
-            output = Path.GetFullPath(output);
+            var projectJson = File.ReadAllText(projectFile);
+            var project = JsonSerializer.Deserialize<Project>(projectJson);
+
+            if (project is null)
+            {
+                AnsiConsole.WriteLine("Unable to read project file.");
+                return -1;
+            }
 
             if (!Directory.Exists(output))
             {
@@ -58,13 +74,28 @@ namespace Express.Build.Commands
             }
 
             var projectName = Path.GetFileNameWithoutExtension(projectFile);
-            var sourceFiles = SourceFileDiscovery.GetSourceFilesInDirectory(projectFolder);
+            var compilation = new ExpressNetCompilation(projectName, projectFolder, output, configuration)
+                .SetTargetFrameworks(TargetFrameworks.NetCore50, TargetFrameworks.AspNetCore50)
+                .SetBootstrapper(BasicBootstrapper.Instance);
+
+            var packageAssemblies = Enumerable.Empty<PackageAssembly>();
+
+            if (project.PackageReferences?.Any() ?? false)
+            {
+                AnsiConsole.WriteLine($"Restore NuGet Packages for {projectName}");
+
+                var nugetClient = new NuGetClient(project, configuration, projectFolder);
+                packageAssemblies = nugetClient
+                    .RestoreProjectDependenciesAsync()
+                    .GetAwaiter()
+                    .GetResult();
+
+                compilation = compilation.SetPackageAssemblies(packageAssemblies.ToArray());
+            }
 
             AnsiConsole.WriteLine($"Build starting for {projectName}");
 
-            var compilation = new ExpressNetCompilation(projectName, output, configuration)
-                .SetTargetFrameworks(TargetFrameworks.NetCore50, TargetFrameworks.AspNetCore50)
-                .SetBootstrapper(BasicBootstrapper.Instance);
+            var sourceFiles = SourceFileDiscovery.GetSourceFilesInDirectory(projectFolder);
 
             var syntaxTrees = new SyntaxTree[sourceFiles.Length];
 
@@ -88,11 +119,7 @@ namespace Express.Build.Commands
                 .SetSyntaxTrees(syntaxTrees)
                 .Emit();
 
-            if (result.Success)
-            {
-                AnsiConsole.WriteLine("Build completed successfully.");
-            }
-            else
+            if (!result.Success)
             {
                 AnsiConsole.WriteLine("Build Error.");
 
@@ -100,7 +127,27 @@ namespace Express.Build.Commands
                 {
                     AnsiConsole.WriteLine(diagnostic.Message);
                 }
+
+                return -1;
             }
+
+            if (packageAssemblies.Any())
+            {
+                AnsiConsole.WriteLine("Copying package assemblies");
+
+                var assemblyFiles = packageAssemblies.SelectMany(pa => pa.PackageFiles);
+
+                foreach (var assemblyFile in assemblyFiles)
+                {
+                    var name = Path.GetFileName(assemblyFile);
+                    var from = Path.Combine(projectFolder, assemblyFile);
+                    var to = Path.Combine(output, name);
+
+                    File.Copy(from, to);
+                }
+            }
+
+            AnsiConsole.WriteLine("Build completed successfully.");
 
             return 0;
         }

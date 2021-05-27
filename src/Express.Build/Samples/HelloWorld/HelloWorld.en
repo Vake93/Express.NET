@@ -1,6 +1,13 @@
+using Newtonsoft.Json;
+
 service HelloWorldService;
 
 get Ok ()
 {
-    return Ok("Hello World for Express.NET!");
+	var json = JsonConvert.SerializeObject(new 
+	{ 
+		Message = "Hello World from Express.NET!"
+	});
+
+    return Ok(json);
 }

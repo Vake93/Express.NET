@@ -1,6 +1,7 @@
 ﻿using Express.Net.CodeAnalysis.Text;
 using Express.Net.Emit;
 using Express.Net.Emit.Bootstrapping;
+using Express.Net.Models.NuGet;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System;
@@ -17,17 +18,20 @@ namespace Express.Net
     public sealed class ExpressNetCompilation
     {
         private readonly string _projectName;
+        private readonly string _projectPath;
         private readonly string _output;
         private readonly string _configuration;
 
         private SyntaxTree[]? _syntaxTrees;
         private TargetFramework[]? _targetFrameworks;
         private Bootstrapper? _bootstrapper;
+        private PackageAssembly[]? _packageAssemblies;
 
-        public ExpressNetCompilation(string projectName, string output, string configuration)
+        public ExpressNetCompilation(string projectName, string projectPath, string output, string configuration)
         {
             _output = output;
             _projectName = projectName;
+            _projectPath = projectPath;
             _configuration = configuration;
         }
 
@@ -46,6 +50,12 @@ namespace Express.Net
         public ExpressNetCompilation SetTargetFrameworks(params TargetFramework[] targetFrameworks)
         {
             _targetFrameworks = targetFrameworks;
+            return this;
+        }
+
+        public ExpressNetCompilation SetPackageAssemblies(params PackageAssembly[] packageAssemblies)
+        {
+            _packageAssemblies = packageAssemblies;
             return this;
         }
 
@@ -158,6 +168,21 @@ namespace Express.Net
             return optimizationLevel;
         }
 
-        private IEnumerable<MetadataReference> BuildReferences() => _targetFrameworks!.SelectMany(t => t);
+        private IEnumerable<MetadataReference> BuildReferences()
+        {
+            var references = _targetFrameworks!.SelectMany(t => t).ToList();
+
+            if (_packageAssemblies?.Any() ?? false)
+            {
+                var assemblyFiles = _packageAssemblies.SelectMany(pa => pa.PackageFiles);
+
+                foreach (var assemblyFile in assemblyFiles)
+                {
+                    references.Add(MetadataReference.CreateFromFile(Path.Combine(_projectPath, assemblyFile)));
+                }
+            }
+
+            return references;
+        }
     }
 }

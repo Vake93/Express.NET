@@ -41,7 +41,8 @@ namespace Express.Net.Packages
         private readonly NuGetFramework _framework;
         private readonly ISettings _nugetSettings;
         private readonly ILogger _logger;
-        
+
+        private readonly string _projectPath;
         private readonly string _packagePath;
         private readonly Project _project;
 
@@ -52,6 +53,7 @@ namespace Express.Net.Packages
             ILogger? logger = null)
         {
             _packagePath = Path.Combine(projectPath, objDirectoryName, configuration);
+            _projectPath = projectPath;
             _project = project;
 
             var root = Path.GetPathRoot(_packagePath);
@@ -199,7 +201,7 @@ namespace Express.Net.Packages
                             .GetFullPath(Path
                             .Join(_packagePathResolver.GetInstallPath(requiredDependency), item));
 
-                        var relativePath = Path.GetRelativePath(_packagePath, path);
+                        var relativePath = Path.GetRelativePath(_projectPath, path);
 
                         packageFiles.Add(relativePath);
                     }
