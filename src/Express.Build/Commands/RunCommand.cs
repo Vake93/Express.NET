@@ -146,13 +146,14 @@ namespace Express.Build.Commands
             process.StartInfo.RedirectStandardInput = false;
             process.StartInfo.RedirectStandardOutput = false;
 
-            AnsiConsole.Clear();
+            AnsiConsole.WriteLine($"Starting {projectName}");
+            AnsiConsole.WriteLine();
 
             process.Start();
 
             process.WaitForExit();
 
-            return 0;
+            return process.ExitCode;
         }
 
     }
