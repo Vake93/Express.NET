@@ -63,17 +63,18 @@ namespace Express.Build.Commands
             }
 
             var projectName = Path.GetFileNameWithoutExtension(projectFile);
+            var bootstrapper = new BasicBootstrapper(project.GenerateSwaggerDoc, project.AddSwaggerUI);
             var compilation = new ExpressNetCompilation(projectName, projectFolder, output, configuration)
                 .SetTargetFrameworks(TargetFrameworks.NetCore50, TargetFrameworks.AspNetCore50)
-                .SetBootstrapper(BasicBootstrapper.Instance);
+                .SetBootstrapper(bootstrapper);
 
             var packageAssemblies = Enumerable.Empty<PackageAssembly>();
 
-            if (project.PackageReferences?.Any() ?? false)
+            if ((project.PackageReferences != null && project.PackageReferences.Any()) || bootstrapper.PackageReferences.Any())
             {
                 AnsiConsole.WriteLine($"Restore NuGet Packages for {projectName}");
 
-                var nugetClient = new NuGetClient(project, configuration, projectFolder);
+                var nugetClient = new NuGetClient(project, bootstrapper, configuration, projectFolder);
                 packageAssemblies = nugetClient
                     .RestoreProjectDependenciesAsync()
                     .GetAwaiter()

@@ -5,5 +5,7 @@
       "Version": "13.0.1"
     }
   ],
-  "LibraryReferences": []
+  "LibraryReferences": [],
+  "GenerateSwaggerDoc": true,
+  "AddSwaggerUI": true
 }

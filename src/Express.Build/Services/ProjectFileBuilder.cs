@@ -19,7 +19,9 @@ namespace Express.Build.Services
         {
             var project = new Project(
                 Array.Empty<PackageReference>(),
-                Array.Empty<LibraryReference>());
+                Array.Empty<LibraryReference>(),
+                true,
+                true);
 
             var jsonText = JsonSerializer.Serialize(project, _jsonSerializerOptions);
             var fileName = $"{projectName}.enproj";

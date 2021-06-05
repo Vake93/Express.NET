@@ -1,4 +1,5 @@
-﻿using Express.Net.Models;
+﻿using Express.Net.Emit.Bootstrapping;
+using Express.Net.Models;
 using Express.Net.Models.NuGet;
 using Express.Net.Packages.Services;
 using NuGet.Common;
@@ -42,17 +43,20 @@ namespace Express.Net.Packages
         private readonly ISettings _nugetSettings;
         private readonly ILogger _logger;
 
+        private readonly Bootstrapper _bootstrapper;
         private readonly string _projectPath;
         private readonly string _packagePath;
         private readonly Project _project;
 
         public NuGetClient(
             Project project,
+            Bootstrapper bootstrapper,
             string configuration,
             string projectPath,
             ILogger? logger = null)
         {
             _packagePath = Path.Combine(projectPath, objDirectoryName, configuration);
+            _bootstrapper = bootstrapper;
             _projectPath = projectPath;
             _project = project;
 
@@ -78,7 +82,9 @@ namespace Express.Net.Packages
 
         public async Task<IEnumerable<PackageAssembly>> RestoreProjectDependenciesAsync(CancellationToken cancellationToken = default)
         {
-            if (_project.PackageReferences is null || _project.PackageReferences.Length == 0)
+            var projectPackageReferences = _bootstrapper.PackageReferences.Union(_project.PackageReferences ?? Array.Empty<Models.PackageReference>());
+
+            if (!projectPackageReferences.Any())
             {
                 return Array.Empty<PackageAssembly>();
             }
@@ -117,7 +123,7 @@ namespace Express.Net.Packages
             var packageIdentities = new List<PackageIdentity>();
             var packageReferences = new List<PackageReference>();
 
-            foreach (var packageReference in _project.PackageReferences)
+            foreach (var packageReference in projectPackageReferences)
             {
                 var package = new PackageIdentity(packageReference.Name, NuGetVersion.Parse(packageReference.Version));
 

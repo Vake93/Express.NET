@@ -83,7 +83,7 @@ namespace Express.Net
             var pdbName = $"{_projectName}.pdb";
 
             var compilation = CSharpCompilation
-                .Create(assemblyName)
+                .Create(_projectName)
                 .WithOptions(new CSharpCompilationOptions(OutputKind.ConsoleApplication)
                 .WithOptimizationLevel(configuration)
                 .WithPlatform(Platform.AnyCpu))
