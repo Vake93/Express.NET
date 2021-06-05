@@ -1,4 +1,5 @@
-﻿using Express.Net.Models;
+﻿using Express.Net.Emit.Bootstrapping;
+using Express.Net.Models;
 using Express.Net.Packages;
 using System.IO;
 using System.Linq;
@@ -20,9 +21,10 @@ namespace Express.Net.Tests
                 new ("StackExchange.Redis", "2.2.4"),
             };
 
-            var project = new Project(packageReferences, LibraryReferences: null);
+            var project = new Project(packageReferences, LibraryReferences: null, GenerateSwaggerDoc: false, AddSwaggerUI: false);
+            var bootstrapper = new BasicBootstrapper(addSwagger: false, addSwaggerUI: false);
             var tempPath = Path.GetTempPath();
-            var nuGetClient = new NuGetClient(project, configuration, tempPath);
+            var nuGetClient = new NuGetClient(project, bootstrapper, configuration, tempPath);
 
             var packageAssemblies = await nuGetClient
                 .RestoreProjectDependenciesAsync()
@@ -37,7 +39,7 @@ namespace Express.Net.Tests
 
             foreach (var file in files)
             {
-                var filePath = Path.Combine(tempPath, objDirectoryName, configuration, file);
+                var filePath = Path.Combine(tempPath, file);
                 Assert.True(File.Exists(filePath), $"{filePath} not found");
             }
         }
