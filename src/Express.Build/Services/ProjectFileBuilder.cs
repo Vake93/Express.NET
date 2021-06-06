@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 
-namespace Express.Build.Services
+namespace Express.Net.Build.Services
 {
     public static class ProjectFileBuilder
     {

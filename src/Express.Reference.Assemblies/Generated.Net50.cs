@@ -3,7 +3,7 @@
   using System.Collections.Generic;
   using Microsoft.CodeAnalysis;
 
-  namespace Express.Reference.Assemblies
+  namespace Express.Net.Reference.Assemblies
   {
     internal static class Net50Resources
     {

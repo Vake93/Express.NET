@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
-namespace Express.Build.Services
+namespace Express.Net.Build.Services
 {
     internal static class RuntimeConfigBuilder
     {

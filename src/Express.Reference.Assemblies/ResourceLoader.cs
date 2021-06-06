@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 
-namespace Express.Reference.Assemblies
+namespace Express.Net.Reference.Assemblies
 {
     internal static class ResourceLoader
     {

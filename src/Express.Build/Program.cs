@@ -1,4 +1,4 @@
-﻿using Express.Build.Commands;
+﻿using Express.Net.Build.Commands;
 using Spectre.Console.Cli;
 
 var app = new CommandApp();

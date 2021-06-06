@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Linq;
 
-namespace Express.Build.Services
+namespace Express.Net.Build.Services
 {
     internal static class SourceFileDiscovery
     {

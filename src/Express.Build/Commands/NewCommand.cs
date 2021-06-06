@@ -1,4 +1,4 @@
-﻿using Express.Build.Services;
+﻿using Express.Net.Build.Services;
 using Spectre.Console;
 using Spectre.Console.Cli;
 using System.ComponentModel;
@@ -6,7 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace Express.Build.Commands
+namespace Express.Net.Build.Commands
 {
     public class NewCommand : Command<NewCommand.NewSettings>
     {

@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Express.Reference.Assemblies\Express.Reference.Assemblies.csproj" />
+    <ProjectReference Include="..\Express.Reference.Assemblies\Express.Net.Reference.Assemblies.csproj" />
   </ItemGroup>
 
 </Project>

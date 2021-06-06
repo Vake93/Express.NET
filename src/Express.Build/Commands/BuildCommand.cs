@@ -1,5 +1,4 @@
-﻿using Express.Build.Services;
-using Express.Net;
+﻿using Express.Net.Build.Services;
 using Express.Net.CodeAnalysis;
 using Express.Net.Emit;
 using Express.Net.Emit.Bootstrapping;
@@ -14,7 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 
-namespace Express.Build.Commands
+namespace Express.Net.Build.Commands
 {
     internal sealed class BuildCommand : Command<BuildCommand.BuildSettings>
     {

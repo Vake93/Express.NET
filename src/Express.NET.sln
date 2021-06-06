@@ -5,13 +5,13 @@ VisualStudioVersion = 16.0.31229.75
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Express.Net", "Express.Net\Express.Net.csproj", "{CF6AD227-82E0-470E-A9F8-87F9E7DACF18}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Express.Reference.Assemblies", "Express.Reference.Assemblies\Express.Reference.Assemblies.csproj", "{43C521D0-60CF-4683-AAC0-8BC12F558CFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Express.Net.Reference.Assemblies", "Express.Reference.Assemblies\Express.Net.Reference.Assemblies.csproj", "{43C521D0-60CF-4683-AAC0-8BC12F558CFA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Express.Test", "Express.Test\Express.Test.csproj", "{F7BD824D-607B-4006-8888-E753523DDDDC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Express.Net.Test", "Express.Test\Express.Net.Test.csproj", "{F7BD824D-607B-4006-8888-E753523DDDDC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Express.Build", "Express.Build\Express.Build.csproj", "{65F48FF0-4152-4906-924A-AEB72F0D1E77}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Express.Net.Build", "Express.Build\Express.Net.Build.csproj", "{65F48FF0-4152-4906-924A-AEB72F0D1E77}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Express.Base", "Express.Base\Express.Base.csproj", "{57837E50-18D8-438F-8A85-78A71D2BF8AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Express.Net.Base", "Express.Base\Express.Net.Base.csproj", "{57837E50-18D8-438F-8A85-78A71D2BF8AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
