@@ -120,7 +120,7 @@ function Get-Content($name, $packagePath, [string]$excludePattern)
   return @{ CodeContent = $codeContent; TargetsContent = $targetsContent}
 }
 
-$combinedDir = Join-Path $PSScriptRoot "..\Express.Reference.Assemblies"
+$combinedDir = Join-Path $PSScriptRoot "..\Express.Net.Reference.Assemblies"
 
 # Net50
 $map = Get-Content "Net50" 'microsoft.netcore.app.ref\5.0.0\ref\net5.0'
