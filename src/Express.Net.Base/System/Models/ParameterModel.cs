@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System;
 
 namespace Express.Net.System.Models
 {
@@ -48,10 +49,39 @@ namespace Express.Net.System.Models
 
         public object? DefaultValue { get; init; }
 
-        public bool HasBindingSource =>
-            FromBody || FromServices ||
-            FromCookie != null || FromForm != null ||
-            FromQuery != null || FromHeader != null ||
-            FromRoute != null;
+        public BindingSource GetBindingSource()
+        {
+            if (FromBody)
+            {
+                return BindingSource.Body;
+            }
+
+            if (FromServices)
+            {
+                return BindingSource.Services;
+            }
+
+            if (FromForm != null)
+            {
+                return BindingSource.Form;
+            }
+
+            if (FromQuery != null)
+            {
+                return BindingSource.Query;
+            }
+
+            if (FromHeader != null)
+            {
+                return BindingSource.Header;
+            }
+
+            if (FromRoute != null)
+            {
+                return BindingSource.Path;
+            }
+
+            return BindingSource.Custom;
+        }
     }
 }

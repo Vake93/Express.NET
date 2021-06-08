@@ -28,13 +28,15 @@ namespace Express.Net.Test
         };
 
         [HttpGet]
-        public IResult __Get0([FromQuery] int limit = 10, [FromQuery] int skip = 0)
+        [ProducesResponseType(typeof(IEnumerable<TodoItem>), 200)]
+        public IEnumerable<TodoItem> __Get0([FromQuery] int limit = 10, [FromQuery] int skip = 0)
         {
-            return new BaseResponse(todoItems.Skip(skip).Take(limit));
+            return todoItems.Skip(skip).Take(limit);
         }
 
         [HttpPost]
-        public IResult __Post0([FromBody] TodoItem item)
+        [ProducesResponseType(typeof(TodoItem), 201)]
+        public TodoItem __Post0([FromBody] TodoItem item)
         {
             if (item.Id == Guid.Empty)
             {
@@ -43,12 +45,47 @@ namespace Express.Net.Test
 
             todoItems.Add(item);
 
-            return new BaseResponse(item);
+            return item;
         }
     }
 
     public class ServerTests
     {
+        [Fact]
+        public async Task SwaggerTest()
+        {
+            var hostBuilder = new HostBuilder()
+                .ConfigureWebHost(webHost =>
+                {
+                    webHost.UseTestServer();
+
+                    webHost.ConfigureServices(services =>
+                    {
+                        services.AddRouting();
+                        services.AddExpressSwagger("Todo Service", "V1");
+                    });
+
+                    webHost.Configure(app =>
+                    {
+                        app.UseRouting();
+
+                        app.UseEndpoints(endpoints =>
+                        {
+                            endpoints.MapHttpHandler<TodoService>();
+                            endpoints.MapSwagger();
+                        });
+                    });
+                });
+
+            var host = await hostBuilder.StartAsync();
+
+            var client = host.GetTestClient();
+
+            var openApiJson = await client.GetStringAsync("swagger/documents/swagger.json");
+
+            Assert.NotEmpty(openApiJson);
+        }
+
         [Fact]
         public async Task TodoServiceTests()
         {
