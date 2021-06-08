@@ -31,8 +31,6 @@ namespace Express.Net.System
 
         private static readonly Expression CancellationTokenNoneExpr = Expression.Property(null, typeof(CancellationToken).GetProperty(nameof(CancellationToken.None))!);
 
-        private static readonly ConstructorInfo ObjectResultCtor = typeof(BaseResponse).GetConstructors()[0];
-
         internal static void Build<THttpHandler>(IEndpointRouteBuilder routes)
         {
             Build(typeof(THttpHandler), routes);

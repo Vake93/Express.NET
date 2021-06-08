@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
@@ -29,14 +30,27 @@ namespace Express.Net.Test
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<TodoItem>), 200)]
-        public IEnumerable<TodoItem> __Get0([FromQuery] int limit = 10, [FromQuery] int skip = 0)
+        public static IEnumerable<TodoItem> Get0([FromQuery] int limit = 10, [FromQuery] int skip = 0)
         {
             return todoItems.Skip(skip).Take(limit);
         }
 
+        [HttpGet("{itemId}")]
+        [ProducesResponseType(typeof(TodoItem), 200)]
+        [ProducesResponseType(404)]
+        public static IResult Get1([FromRoute]Guid itemId)
+        {
+            var item = todoItems.Where(i => i.Id == itemId).FirstOrDefault();
+
+            if (item is TodoItem)
+                return new BaseResponse(item);
+
+            return new BaseResponse("Not Found",statusCode: 404);
+        }
+
         [HttpPost]
         [ProducesResponseType(typeof(TodoItem), 201)]
-        public TodoItem __Post0([FromBody] TodoItem item)
+        public static TodoItem Post0([FromBody] TodoItem item)
         {
             if (item.Id == Guid.Empty)
             {
@@ -146,6 +160,10 @@ namespace Express.Net.Test
 
             Assert.NotNull(response);
             Assert.Equal(6, response.Length);
+
+            var TodoItemresponse = await client.GetAsync($"api/v1/todo/{Guid.NewGuid()}");
+
+            Assert.Equal(HttpStatusCode.NotFound, TodoItemresponse.StatusCode);
         }
     }
 }

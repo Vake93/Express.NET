@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 
 namespace Microsoft.Extensions.Internal
 {
+#nullable disable
     internal readonly struct AwaitableInfo
     {
         public Type AwaiterType { get; }
@@ -47,7 +48,7 @@ namespace Microsoft.Extensions.Internal
                 && m.ReturnType != null);
             if (getAwaiterMethod == null)
             {
-                awaitableInfo = default(AwaitableInfo);
+                awaitableInfo = default;
                 return false;
             }
 
@@ -60,7 +61,7 @@ namespace Microsoft.Extensions.Internal
                 && p.GetMethod != null);
             if (isCompletedProperty == null)
             {
-                awaitableInfo = default(AwaitableInfo);
+                awaitableInfo = default;
                 return false;
             }
 
@@ -69,7 +70,7 @@ namespace Microsoft.Extensions.Internal
             var implementsINotifyCompletion = awaiterInterfaces.Any(t => t.Equals(typeof(INotifyCompletion)));
             if (!implementsINotifyCompletion)
             {
-                awaitableInfo = default(AwaitableInfo);
+                awaitableInfo = default;
                 return false;
             }
 
@@ -110,7 +111,7 @@ namespace Microsoft.Extensions.Internal
                 && m.GetParameters().Length == 0);
             if (getResultMethod == null)
             {
-                awaitableInfo = default(AwaitableInfo);
+                awaitableInfo = default;
                 return false;
             }
 
