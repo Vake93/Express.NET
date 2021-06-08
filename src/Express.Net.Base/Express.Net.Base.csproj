@@ -7,6 +7,14 @@
     <Nullable>enable</Nullable>
     <PackageDescription>A fast DSL for build microservices.</PackageDescription>
     <Authors>Vishvaka Ranasinghe</Authors>
+    <Description>The Base Packagers for Express.NET DSL</Description>
+    <Copyright>2021 Vishvaka Ranasinghe</Copyright>
+    <PackageProjectUrl>https://github.com/Vake93/Express.NET</PackageProjectUrl>
+    <PackageLicenseExpression>https://github.com/Vake93/Express.NET/blob/main/LICENSE</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/Vake93/Express.NET</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Version>1-alpha-1</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
