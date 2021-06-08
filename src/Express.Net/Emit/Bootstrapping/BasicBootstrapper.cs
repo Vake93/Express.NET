@@ -59,17 +59,6 @@ namespace Express.Net.Emit.Bootstrapping
             AddSwaggerUI = addSwaggerUI;
         }
 
-        public override IEnumerable<PackageReference> PackageReferences
-        {
-            get
-            {
-                if (AddSwagger || AddSwaggerUI)
-                {
-                    yield return new PackageReference("Swashbuckle.AspNetCore", "6.1.4");
-                }
-            }
-        }
-
         public override SyntaxTree GetBootstrapper()
         {
             var codeBuilder = new StringBuilder(_code);

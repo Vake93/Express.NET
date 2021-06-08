@@ -82,9 +82,7 @@ namespace Express.Net.Packages
 
         public async Task<IEnumerable<PackageAssembly>> RestoreProjectDependenciesAsync(CancellationToken cancellationToken = default)
         {
-            var projectPackageReferences = _bootstrapper.PackageReferences.Union(_project.PackageReferences ?? Array.Empty<Models.PackageReference>());
-
-            if (!projectPackageReferences.Any())
+            if (_project.PackageReferences is null || _project.PackageReferences.Length == 0)
             {
                 return Array.Empty<PackageAssembly>();
             }
@@ -123,7 +121,7 @@ namespace Express.Net.Packages
             var packageIdentities = new List<PackageIdentity>();
             var packageReferences = new List<PackageReference>();
 
-            foreach (var packageReference in projectPackageReferences)
+            foreach (var packageReference in _project.PackageReferences)
             {
                 var package = new PackageIdentity(packageReference.Name, NuGetVersion.Parse(packageReference.Version));
 

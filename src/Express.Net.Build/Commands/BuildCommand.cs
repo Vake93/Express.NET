@@ -75,12 +75,12 @@ namespace Express.Net.Build.Commands
             var projectName = Path.GetFileNameWithoutExtension(projectFile);
             var bootstrapper = new BasicBootstrapper(project.GenerateSwaggerDoc, project.AddSwaggerUI);
             var compilation = new ExpressNetCompilation(projectName, projectFolder, output, configuration)
-                .SetTargetFrameworks(TargetFrameworks.NetCore50, TargetFrameworks.AspNetCore50)
+                .SetTargetFrameworks(TargetFrameworks.NetCore50, TargetFrameworks.AspNetCore50, TargetFrameworks.ExpressNet)
                 .SetBootstrapper(bootstrapper);
 
             var packageAssemblies = Enumerable.Empty<PackageAssembly>();
 
-            if ((project.PackageReferences != null && project.PackageReferences.Any()) || bootstrapper.PackageReferences.Any())
+            if (project.PackageReferences != null && project.PackageReferences.Length > 0)
             {
                 AnsiConsole.WriteLine($"Restore NuGet Packages for {projectName}");
 

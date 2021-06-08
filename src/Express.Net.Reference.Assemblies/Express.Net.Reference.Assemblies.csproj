@@ -16,5 +16,11 @@
 
   <Import Project="Generated.Net50.targets" />
   <Import Project="Generated.AspNet50.targets" />
-  
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\Library\Express.Net.Base.dll">
+      <LogicalName>Express.Net.Base</LogicalName>
+      <Link>Resources\Express.Net.Base.dll</Link>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>
