@@ -7,7 +7,7 @@ namespace Express.Net
     {
         public object? Value { get; }
 
-        public BaseResponse(object? value)
+        public BaseResponse(object? value = null)
         {
             Value = value;
         }
