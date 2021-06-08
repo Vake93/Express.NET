@@ -5,6 +5,8 @@
     <RootNamespace>Express.Net</RootNamespace>
     <IsPackable>true</IsPackable>
     <Nullable>enable</Nullable>
+    <PackageDescription>A fast DSL for build microservices.</PackageDescription>
+    <Authors>Vishvaka Ranasinghe</Authors>
   </PropertyGroup>
 
   <ItemGroup>
