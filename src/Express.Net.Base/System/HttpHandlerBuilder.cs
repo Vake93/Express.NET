@@ -286,6 +286,8 @@ namespace Express.Net.System
                         var attr = item.Constructor.Invoke(item.ConstructorArguments.Select(a => a.Value).ToArray());
                         b.Metadata.Add(attr);
                     }
+
+                    b.Metadata.Add(method);
                 });
             }
         }
