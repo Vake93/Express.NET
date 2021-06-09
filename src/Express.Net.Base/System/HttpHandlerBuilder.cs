@@ -22,7 +22,7 @@ namespace Express.Net.System
         private static readonly MethodInfo ExecuteTaskResultOfTMethodInfo = typeof(HttpHandlerBuilder).GetMethod(nameof(ExecuteTaskResult), BindingFlags.NonPublic | BindingFlags.Static)!;
         private static readonly MethodInfo ExecuteValueResultTaskOfTMethodInfo = typeof(HttpHandlerBuilder).GetMethod(nameof(ExecuteValueTaskResult), BindingFlags.NonPublic | BindingFlags.Static)!;
         private static readonly MethodInfo GetRequiredServiceMethodInfo = typeof(HttpHandlerBuilder).GetMethod(nameof(GetRequiredService), BindingFlags.NonPublic | BindingFlags.Static)!;
-        private static readonly MethodInfo ObjectResultExecuteAsync = typeof(BaseResponse).GetMethod(nameof(BaseResponse.ExecuteAsync), BindingFlags.Public | BindingFlags.Instance)!;
+        private static readonly MethodInfo ObjectResultExecuteAsync = typeof(Response).GetMethod(nameof(Response.ExecuteAsync), BindingFlags.Public | BindingFlags.Instance)!;
         private static readonly MethodInfo ResultExecuteAsync = typeof(IResult).GetMethod(nameof(IResult.ExecuteAsync), BindingFlags.Public | BindingFlags.Instance)!;
         private static readonly MethodInfo StringResultExecuteAsync = GetMethodInfo<Func<HttpResponse, string, Task>>((response, text) => HttpResponseWritingExtensions.WriteAsync(response, text, default));
         private static readonly MethodInfo JsonResultExecuteAsync = GetMethodInfo<Func<HttpResponse, object, Task>>((response, value) => HttpResponseJsonExtensions.WriteAsJsonAsync(response, value, default));
@@ -360,19 +360,19 @@ namespace Express.Net.System
 
         private static async Task ExecuteTask<T>(Task<T> task, HttpContext httpContext)
         {
-            await new BaseResponse(await task).ExecuteAsync(httpContext);
+            await new Response(await task).ExecuteAsync(httpContext);
         }
 
         private static Task ExecuteValueTask<T>(ValueTask<T> task, HttpContext httpContext)
         {
             static async Task ExecuteAwaited(ValueTask<T> task, HttpContext httpContext)
             {
-                await new BaseResponse(await task).ExecuteAsync(httpContext);
+                await new Response(await task).ExecuteAsync(httpContext);
             }
 
             if (task.IsCompletedSuccessfully)
             {
-                return new BaseResponse(task.GetAwaiter().GetResult()).ExecuteAsync(httpContext);
+                return new Response(task.GetAwaiter().GetResult()).ExecuteAsync(httpContext);
             }
 
             return ExecuteAwaited(task, httpContext);

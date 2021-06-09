@@ -17,7 +17,7 @@ namespace Express.Net.Test
     public record TodoItem(Guid Id, string Description);
 
     [Route("api/v1/todo")]
-    public class TodoService
+    public class TodoService : ControllerBase
     {
         private static readonly IList<TodoItem> todoItems = new List<TodoItem>()
         {
@@ -30,27 +30,27 @@ namespace Express.Net.Test
 
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<TodoItem>), 200)]
-        public static IEnumerable<TodoItem> Get0([FromQuery] int limit = 10, [FromQuery] int skip = 0)
+        public IResult Get0([FromQuery] int limit = 10, [FromQuery] int skip = 0)
         {
-            return todoItems.Skip(skip).Take(limit);
+            return Ok(todoItems.Skip(skip).Take(limit));
         }
 
         [HttpGet("{itemId}")]
         [ProducesResponseType(typeof(TodoItem), 200)]
         [ProducesResponseType(404)]
-        public static IResult Get1([FromRoute]Guid itemId)
+        public IResult Get1([FromRoute]Guid itemId)
         {
             var item = todoItems.Where(i => i.Id == itemId).FirstOrDefault();
 
             if (item is TodoItem)
-                return new BaseResponse(item);
+                return Ok(item);
 
-            return new BaseResponse("Not Found",statusCode: 404);
+            return NotFound();
         }
 
         [HttpPost]
         [ProducesResponseType(typeof(TodoItem), 201)]
-        public static TodoItem Post0([FromBody] TodoItem item)
+        public IResult Post0([FromBody] TodoItem item)
         {
             if (item.Id == Guid.Empty)
             {
@@ -59,7 +59,23 @@ namespace Express.Net.Test
 
             todoItems.Add(item);
 
-            return item;
+            return Created(item);
+        }
+
+        [HttpDelete("{itemId}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        public IResult Delete0([FromRoute] Guid itemId)
+        {
+            var item = todoItems.Where(i => i.Id == itemId).FirstOrDefault();
+
+            if (item is TodoItem)
+            {
+                todoItems.Remove(item);
+                return NoContent();
+            }
+
+            return NotFound();
         }
     }
 
@@ -86,7 +102,7 @@ namespace Express.Net.Test
                         app.UseEndpoints(endpoints =>
                         {
                             endpoints.MapHttpHandler<TodoService>();
-                            endpoints.MapSwagger();
+                            endpoints.MapExpressSwagger();
                         });
                     });
                 });
