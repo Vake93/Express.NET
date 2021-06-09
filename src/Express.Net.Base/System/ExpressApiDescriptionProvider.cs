@@ -53,7 +53,7 @@ namespace Express.Net.System
                     {
                         // Swagger uses this to group endpoints together.
                         // Group methods together using the service name.
-                        ["controller"] = methodModel.MethodInfo.DeclaringType?.FullName ?? string.Empty
+                        ["controller"] = methodModel.MethodInfo.DeclaringType?.Name ?? string.Empty
                     }
                 },
                 RelativePath = routeEndpoint.RoutePattern.RawText?.TrimStart('/') ?? string.Empty
