@@ -101,7 +101,7 @@ namespace Express.Net.Test
 
                         app.UseEndpoints(endpoints =>
                         {
-                            endpoints.MapHttpHandler<TodoService>();
+                            endpoints.MapExpressController();
                             endpoints.MapExpressSwagger();
                         });
                     });
@@ -135,7 +135,7 @@ namespace Express.Net.Test
 
                         app.UseEndpoints(endpoints =>
                         {
-                            endpoints.MapHttpHandler<TodoService>();
+                            endpoints.MapExpressController();
                         });
                     });
                 });

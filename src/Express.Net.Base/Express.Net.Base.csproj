@@ -11,7 +11,7 @@
     <Copyright>2021 Vishvaka Ranasinghe</Copyright>
     <PackageProjectUrl>https://github.com/Vake93/Express.NET</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Vake93/Express.NET</RepositoryUrl>
-    <Version>1-alpha-2</Version>
+    <Version>1-alpha-3</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
