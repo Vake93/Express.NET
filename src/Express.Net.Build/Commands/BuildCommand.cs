@@ -73,7 +73,7 @@ namespace Express.Net.Build.Commands
             }
 
             var projectName = Path.GetFileNameWithoutExtension(projectFile);
-            var bootstrapper = new BasicBootstrapper(project.GenerateSwaggerDoc, project.AddSwaggerUI);
+            var bootstrapper = new BasicBootstrapper(projectName, project.GenerateSwaggerDoc, project.AddSwaggerUI);
             var compilation = new ExpressNetCompilation(projectName, projectFolder, output, configuration)
                 .SetTargetFrameworks(TargetFrameworks.NetCore50, TargetFrameworks.AspNetCore50, TargetFrameworks.ExpressNet)
                 .SetBootstrapper(bootstrapper);

@@ -1,7 +1,5 @@
-﻿using Express.Net.Models;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using System.Collections.Generic;
 using System.Text;
 
 namespace Express.Net.Emit.Bootstrapping
@@ -9,69 +7,76 @@ namespace Express.Net.Emit.Bootstrapping
     public sealed class BasicBootstrapper : Bootstrapper
     {
         private const string _code = @"
-            using Microsoft.AspNetCore.Builder;
-            using Microsoft.AspNetCore.Hosting;
-            using Microsoft.Extensions.DependencyInjection;
-            using Microsoft.Extensions.Hosting;
-            using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Express.Net;
 
-            static IHostBuilder CreateHostBuilder(string[] args) =>
-                Host
-                    .CreateDefaultBuilder(args)
-                    .ConfigureWebHost(webBuilder =>
-                    {
-                        webBuilder.UseKestrel();
+const string projectName = ""{ProjectName}"";
+const string projectVersion = ""V1"";
 
-                        webBuilder.ConfigureServices(services =>
-                        {
-                            services.AddControllers();
-            #if Swagger
-                            services.AddSwaggerGen();
-            #endif
-                        });
-
-                        webBuilder.Configure(app =>
-                        {
-                            app.UseRouting();
-
-                            app.UseEndpoints(endpoints =>
-                            {
-                                endpoints.MapControllers();
-            #if Swagger
-                                endpoints.MapSwagger();
-            #endif
-                            });
-
-            #if SwaggerUI
-                            app.UseSwaggerUI();
-            #endif
-                        });
-                    });
-
-            CreateHostBuilder(args).Build().Run();";
-
-        private readonly bool AddSwagger;
-        private readonly bool AddSwaggerUI;
-
-        public BasicBootstrapper(bool addSwagger, bool addSwaggerUI)
+static IHostBuilder CreateHostBuilder(string[] args) => Host
+        .CreateDefaultBuilder(args)
+        .ConfigureWebHost(webBuilder =>
         {
-            AddSwagger = addSwagger;
-            AddSwaggerUI = addSwaggerUI;
+            webBuilder.UseKestrel();
+
+            webBuilder.ConfigureServices(services =>
+            {
+                services.AddRouting();
+#if Swagger
+                services.AddExpressSwagger(projectName, projectVersion);
+#endif
+            });
+
+            webBuilder.Configure(app =>
+            {
+                app.UseRouting();
+
+                app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapExpressController();
+#if Swagger
+                    endpoints.MapExpressSwagger();
+#endif
+                });
+
+#if SwaggerUI
+                app.UseExpressSwaggerUI(projectName);
+#endif
+            });
+        });
+
+CreateHostBuilder(args).Build().Run();";
+
+        private readonly string _projectName;
+        private readonly bool _addSwagger;
+        private readonly bool _addSwaggerUI;
+
+        public BasicBootstrapper(string projectName, bool addSwagger, bool addSwaggerUI)
+        {
+            _projectName = projectName;
+            _addSwagger = addSwagger;
+            _addSwaggerUI = addSwaggerUI;
         }
 
         public override SyntaxTree GetBootstrapper()
         {
-            var codeBuilder = new StringBuilder(_code);
+            var codeBuilder = new StringBuilder();
 
-            if (AddSwagger)
+            if (_addSwagger)
             {
-                codeBuilder.Insert(0, "#define Swagger\n");
+                codeBuilder.AppendLine("#define Swagger");
             }
 
-            if (AddSwaggerUI)
+            if (_addSwaggerUI)
             {
-                codeBuilder.Insert(0, "#define SwaggerUI\n");
+                codeBuilder.AppendLine("#define SwaggerUI");
             }
+
+            codeBuilder.AppendLine(_code.Replace("{ProjectName}", _projectName));
 
             return SyntaxFactory.ParseSyntaxTree(codeBuilder.ToString());
         }
