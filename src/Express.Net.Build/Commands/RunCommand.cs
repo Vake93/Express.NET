@@ -100,7 +100,7 @@ namespace Express.Net.Build.Commands
             RuntimeConfigBuilder.BuildRuntimeConfig(
                 projectName,
                 output,
-                TargetFrameworks.AspNetCore50);
+                TargetFrameworks.ExpressNet);
 
             AnsiConsole.WriteLine($"Emiting IL");
 

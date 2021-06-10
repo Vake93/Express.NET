@@ -18,8 +18,8 @@ namespace Express.Net.Emit
 
         private static readonly TargetFramework _expressNet = TargetFramework.BuildTargetFramework(
             "net5.0",
-            "Express.Net",
-            "1.0.0",
+            "Microsoft.AspNetCore.App",
+            "5.0.0",
             BaseLibrary.All);
 
         public static TargetFramework NetCore50 => _netCore50;
