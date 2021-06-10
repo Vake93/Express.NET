@@ -12,7 +12,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Express.Net.Test
+namespace Express.Net.Tests
 {
     public record TodoItem(Guid Id, string Description);
 

@@ -17,16 +17,16 @@ get OkObjectResult ()
 }".Trim();
 
             var csharpCode = @"
-using Microsoft.AspNetCore.Mvc;
+using Express.Net;
 using System.Threading.Tasks;
 
 namespace ProjectName.Controllers
 {
-    [ApiController, Route("""")]
+    [Route("""")]
     public class HelloWorldService : ControllerBase
     {
         [HttpGet]
-        public IActionResult __get0()
+        public IResult __get0()
         {
             return Ok(""Hello World!"");
         }
@@ -60,16 +60,16 @@ get OkObjectResult ()
 }".Trim();
 
             var csharpCode = @"
-using Microsoft.AspNetCore.Mvc;
+using Express.Net;
 using System.Threading.Tasks;
 
 namespace ProjectName.Controllers
 {
-    [ApiController, Route("""")]
+    [Route("""")]
     public class HelloWorldService : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> __get0Async()
+        public async Task<IResult> __get0Async()
         {
             await Task.Delay(10);
             return Ok(""Hello World!"");
@@ -109,18 +109,18 @@ get ""{name}"" Ok (route string name)
 }".Trim();
 
             var csharpCode = @"
-using Microsoft.AspNetCore.Mvc;
+using Express.Net;
 using System.Threading.Tasks;
 
 namespace ProjectName.Controllers
 {
-    [ApiController, Route("""")]
+    [Route("""")]
 #line 1 ""Filename.en""
     public class HelloWorldService : ControllerBase
     {
         [HttpGet]
 #line 3
-        public IActionResult __get0()
+        public IResult __get0()
         {
 #line 5
             return Ok(""Hello World"");
@@ -128,7 +128,7 @@ namespace ProjectName.Controllers
 
         [HttpGet(""{name}"")]
 #line 8
-        public IActionResult __getname1([FromRoute] string name)
+        public IResult __getname1([FromRoute] string name)
         {
 #line 10
             var message = $""Hello {name}"";
@@ -175,12 +175,12 @@ get Ok ()
 }".Trim();
 
             var csharpCode = @"
-using Microsoft.AspNetCore.Mvc;
+using Express.Net;
 using System.Threading.Tasks;
 
 namespace ProjectName.Controllers
 {
-    [ApiController, Route("""")]
+    [Route("""")]
 #line 1 ""Filename.en""
     public class HelloWorldService : ControllerBase
     {
@@ -197,7 +197,7 @@ namespace ProjectName.Controllers
 
         [HttpGet]
 #line 15
-        public IActionResult __get0()
+        public IResult __get0()
         {
 #line 17
             return Ok(_text);
@@ -340,12 +340,12 @@ delete ""{itemId}"" NoContentResult | NotFoundObjectResult (route Guid itemId)
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
+using Express.Net;
 using System.Threading.Tasks;
 
 namespace ProjectName.Controllers
 {
-    [ApiController, Route(""api/v1/todo"")]
+    [Route(""api/v1/todo"")]
 #line 1 ""Filename.en""
     public class TodoService : ControllerBase
     {
@@ -397,7 +397,7 @@ namespace ProjectName.Controllers
 
         [HttpGet]
 #line 43
-        public IActionResult __get0([FromQuery] int limit = 10, [FromQuery] int skip = 0)
+        public IResult __get0([FromQuery] int limit = 10, [FromQuery] int skip = 0)
         {
 #line 45
             return Ok(todoItems.Skip(skip).Take(limit));
@@ -405,7 +405,7 @@ namespace ProjectName.Controllers
 
         [HttpGet(""{itemId}"")]
 #line 52
-        public IActionResult __getitemId1([FromRoute] Guid itemId)
+        public IResult __getitemId1([FromRoute] Guid itemId)
         {
 #line 54
             var index = FindIndexById(itemId);
@@ -424,7 +424,7 @@ namespace ProjectName.Controllers
 
         [HttpPost]
 #line 68
-        public IActionResult __post2([FromBody] TodoItem newItem)
+        public IResult __post2([FromBody] TodoItem newItem)
         {
 #line 70
             todoItems.Add(newItem);
@@ -434,7 +434,7 @@ namespace ProjectName.Controllers
 
         [HttpPut(""{itemId}"")]
 #line 79
-        public IActionResult __putitemId3([FromRoute] Guid itemId, [FromBody] TodoItem updateItem)
+        public IResult __putitemId3([FromRoute] Guid itemId, [FromBody] TodoItem updateItem)
         {
 #line 83
             var index = FindIndexById(itemId);
@@ -455,7 +455,7 @@ namespace ProjectName.Controllers
 
         [HttpDelete(""{itemId}"")]
 #line 100
-        public IActionResult __deleteitemId4([FromRoute] Guid itemId)
+        public IResult __deleteitemId4([FromRoute] Guid itemId)
         {
 #line 102
             var index = FindIndexById(itemId);

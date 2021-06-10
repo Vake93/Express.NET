@@ -45,10 +45,6 @@ namespace Express.Net.CodeAnalysis
 
             if (syntaxKind == SyntaxKind.ServiceDeclaration)
             {
-                csharpAttributeSyntax.Add(
-                    CSharp.SyntaxFactory.Attribute(
-                        CSharp.SyntaxFactory.IdentifierName(Constants.ApiControllerAttribute)));
-
                 if (!string.IsNullOrEmpty(route))
                 {
                     csharpAttributeSyntax.Add(
@@ -267,7 +263,7 @@ namespace Express.Net.CodeAnalysis
                         CSharp.SyntaxFactory.ParseName(name)));
             }
 
-            AddMissingNamespace(Constants.MvcNamespace);
+            AddMissingNamespace(Constants.ExpressNamespace);
             AddMissingNamespace(Constants.TaskNamespace);
 
             return compilationUnit.WithUsings(CSharp.SyntaxFactory.List(csharpUsingDirectives));

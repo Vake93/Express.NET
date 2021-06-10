@@ -57,4 +57,20 @@ namespace Express.Net
 
         }
     }
+
+    public class HttpPatchAttribute : HttpMethodAttribute
+    {
+        public HttpPatchAttribute(string? template = null)
+            : base(Microsoft.AspNetCore.Http.HttpMethods.Patch, template)
+        {
+        }
+    }
+
+    public class HttpHeadAttribute : HttpMethodAttribute
+    {
+        public HttpHeadAttribute(string? template = null)
+            : base(Microsoft.AspNetCore.Http.HttpMethods.Head, template)
+        {
+        }
+    }
 }

@@ -1,7 +1,7 @@
 ﻿using Express.Net.Emit.Bootstrapping;
 using Xunit;
 
-namespace Express.Net.Test
+namespace Express.Net.Tests
 {
     public class BasicBootstrapperTests
     {

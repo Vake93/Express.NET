@@ -13,13 +13,12 @@ namespace Express.Net.CodeAnalysis
         public const string Space = " ";
         public const string Async = "Async";
 
-        public const string MvcNamespace = "Microsoft.AspNetCore.Mvc";
+        public const string ExpressNamespace = "Express.Net";
         public const string TaskNamespace = "System.Threading.Tasks";
         public const string ControllerNamespace = "Controllers";
 
         public const string ControllerBaseClass = "ControllerBase";
 
-        public const string ApiControllerAttribute = "ApiController";
         public const string RouteAttribute = "Route";
         public const string HttpGetAttribute = "HttpGet";
         public const string HttpPostAttribute = "HttpPost";
@@ -33,12 +32,12 @@ namespace Express.Net.CodeAnalysis
         public const string FromHeaderAttribute = "FromHeader";
         public const string FromServicesAttribute = "FromServices";
 
-        public const string AsyncEndpointDeclarationReturnType = "Task<IActionResult>";
-        public const string SyncEndpointDeclarationReturnType = "IActionResult";
+        public const string AsyncEndpointDeclarationReturnType = "Task<IResult>";
+        public const string SyncEndpointDeclarationReturnType = "IResult";
 
         public static readonly string[] SkipAttributes = new[]
         {
-            ApiControllerAttribute, RouteAttribute, HttpGetAttribute, HttpPostAttribute, HttpPutAttribute,
+            RouteAttribute, HttpGetAttribute, HttpPostAttribute, HttpPutAttribute,
             HttpPatchAttribute, HttpDeleteAttribute, HttpHeadAttribute, FromBodyAttribute, FromQueryAttribute,
             FromRouteAttribute, FromHeaderAttribute, FromServicesAttribute
         };
