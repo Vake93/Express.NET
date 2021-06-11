@@ -11,7 +11,7 @@ namespace Express.Net.Tests
             var code = @"
 service HelloWorldService;
 
-get OkObjectResult ()
+get Ok<string> ()
 {
     return Ok(""Hello World!"");
 }".Trim();
@@ -26,6 +26,7 @@ namespace ProjectName.Controllers
     public class HelloWorldService : ControllerBase
     {
         [HttpGet]
+        [ProducesResponseType(typeof(string), 200)]
         public IResult __get0()
         {
             return Ok(""Hello World!"");
@@ -53,7 +54,7 @@ namespace ProjectName.Controllers
             var code = @"
 service HelloWorldService;
 
-get OkObjectResult ()
+get Ok<string> ()
 {
     await Task.Delay(10);
     return Ok(""Hello World!"");
@@ -69,6 +70,7 @@ namespace ProjectName.Controllers
     public class HelloWorldService : ControllerBase
     {
         [HttpGet]
+        [ProducesResponseType(typeof(string), 200)]
         public async Task<IResult> __get0Async()
         {
             await Task.Delay(10);
@@ -97,12 +99,12 @@ namespace ProjectName.Controllers
             var text = @"
 service HelloWorldService;
 
-get Ok ()
+get Ok<string> ()
 {
     return Ok(""Hello World"");
 }
 
-get ""{name}"" Ok (route string name)
+get ""{name}"" Ok<string> (route string name)
 {
 	var message = $""Hello {name}"";
     return Ok(message);
@@ -119,6 +121,7 @@ namespace ProjectName.Controllers
     public class HelloWorldService : ControllerBase
     {
         [HttpGet]
+        [ProducesResponseType(typeof(string), 200)]
 #line 3
         public IResult __get0()
         {
@@ -127,6 +130,7 @@ namespace ProjectName.Controllers
         }
 
         [HttpGet(""{name}"")]
+        [ProducesResponseType(typeof(string), 200)]
 #line 8
         public IResult __getname1([FromRoute] string name)
         {
@@ -169,7 +173,7 @@ csharp
     }
 }
 
-get Ok ()
+get Ok<string> ()
 {
     return Ok(_text);
 }".Trim();
@@ -196,6 +200,7 @@ namespace ProjectName.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(string), 200)]
 #line 15
         public IResult __get0()
         {
@@ -264,7 +269,7 @@ csharp
     #limit: Maximum number of elements to return.
     #skip: Number of elements to exclude from the beginning.
 */
-get OkObjectResult (query int limit = 10, query int skip = 0)
+get Ok<TodoItem[]> (query int limit = 10, query int skip = 0)
 {
     return Ok(todoItems.Skip(skip).Take(limit));
 }
@@ -273,7 +278,7 @@ get OkObjectResult (query int limit = 10, query int skip = 0)
     @description: Returns a todo item by its ID.
     #itemId: ID of the todo item.
 */
-get ""{itemId}"" OkObjectResult | NotFoundObjectResult (route Guid itemId)
+get ""{itemId}"" Ok<TodoItem> | NotFound<string> (route Guid itemId)
 {
     var index = FindIndexById(itemId);
     
@@ -289,7 +294,7 @@ get ""{itemId}"" OkObjectResult | NotFoundObjectResult (route Guid itemId)
 /*
     #description: Adds a new todo item.
 */
-post OkObjectResult (body TodoItem newItem)
+post Ok (body TodoItem newItem)
 {
     todoItems.Add(newItem);
     
@@ -300,7 +305,7 @@ post OkObjectResult (body TodoItem newItem)
     @description: Updates a todo item.
     #itemId: ID of the todo item.
 */
-put ""{itemId}"" OkObjectResult | NotFoundObjectResult  (
+put ""{itemId}"" Ok<TodoItem> | NotFound<string>  (
     route Guid itemId,
     body TodoItem updateItem)
 {
@@ -321,7 +326,7 @@ put ""{itemId}"" OkObjectResult | NotFoundObjectResult  (
     @description: Deletes a todo item.
     #itemId: ID of the todo item.
 */
-delete ""{itemId}"" NoContentResult | NotFoundObjectResult (route Guid itemId)
+delete ""{itemId}"" NoContent | NotFound<string> (route Guid itemId)
 {
     var index = FindIndexById(itemId);
     
@@ -396,6 +401,7 @@ namespace ProjectName.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(TodoItem[]), 200)]
 #line 43
         public IResult __get0([FromQuery] int limit = 10, [FromQuery] int skip = 0)
         {
@@ -404,6 +410,8 @@ namespace ProjectName.Controllers
         }
 
         [HttpGet(""{itemId}"")]
+        [ProducesResponseType(typeof(TodoItem), 200)]
+        [ProducesResponseType(typeof(string), 404)]
 #line 52
         public IResult __getitemId1([FromRoute] Guid itemId)
         {
@@ -423,6 +431,7 @@ namespace ProjectName.Controllers
         }
 
         [HttpPost]
+        [ProducesResponseType(200)]
 #line 68
         public IResult __post2([FromBody] TodoItem newItem)
         {
@@ -433,6 +442,8 @@ namespace ProjectName.Controllers
         }
 
         [HttpPut(""{itemId}"")]
+        [ProducesResponseType(typeof(TodoItem), 200)]
+        [ProducesResponseType(typeof(string), 404)]
 #line 79
         public IResult __putitemId3([FromRoute] Guid itemId, [FromBody] TodoItem updateItem)
         {
@@ -454,6 +465,8 @@ namespace ProjectName.Controllers
         }
 
         [HttpDelete(""{itemId}"")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(string), 404)]
 #line 100
         public IResult __deleteitemId4([FromRoute] Guid itemId)
         {

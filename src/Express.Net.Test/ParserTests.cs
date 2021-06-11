@@ -149,7 +149,7 @@ csharp
         public void ParseSimpleEndpointDeclaration()
         {
             var text = @"
-get OkObjectResult ()
+get Ok<string> ()
 {
     return Ok(""Hello World"");
 }";
@@ -177,7 +177,7 @@ get OkObjectResult ()
     #limit: Maximum number of elements to return.
     #skip: Number of elements to exclude from the beginning.
 */
-get ""/"" ObjectResponse<TodoItem[]> ([Test] query int limit = 10, query int skip = 0, service CancellationToken cancellationToken = default)
+get ""/"" Ok<TodoItem[]> ([Test] query int limit = 10, query int skip = 0, service CancellationToken cancellationToken = default)
 {
     //This returns the filtered items
     return items.Skip(skip).Take(limit).ToArray();
@@ -200,7 +200,7 @@ get ""/"" ObjectResponse<TodoItem[]> ([Test] query int limit = 10, query int ski
             Assert.Equal("/", endpointDefintion.Route.Value);
 
             var returnType = Assert.Single(endpointDefintion.ReturnTypes.Types);
-            Assert.Equal("ObjectResponse<TodoItem[]>", returnType.TypeName);
+            Assert.Equal("Ok<TodoItem[]>", returnType.TypeName);
 
             Assert.Collection(endpointDefintion.ParametersList.Parameters, new Action<EndpointParameterSyntax>[]
             {
@@ -318,7 +318,7 @@ service ""api/v1/todo"" TodoService;";
             var text = @"
 service HelloWorldService;
 
-get OkObjectResult ()
+get Ok<string> ()
 {
     return Ok(""Hello World"");
 }";
@@ -381,23 +381,23 @@ csharp
     #limit: Maximum number of elements to return.
     #skip: Number of elements to exclude from the beginning.
 */
-get ""/"" ObjectResponse<TodoItem[]> (query int limit = 10, query int skip = 0)
+get ""/"" Ok<TodoItem[]> (query int limit = 10, query int skip = 0)
 {
-    return items.Skip(skip).Take(limit).ToArray();
+    return Ok(items.Skip(skip).Take(limit).ToArray());
 }
 
 /*
     @description: Returns a todo item by its ID.
     #itemId: ID of the todo item.
 */
-get ""/{itemId}"" ObjectResponse<TodoItem> | NotFoundResponse (route Guid itemId)
+get ""/{itemId}"" Ok<TodoItem> | NotFound<string> (route Guid itemId)
 {
     var index = FindIndexById(itemId);
     
     if (index < 0)
     {
         // Item with the ID not found, return a not found error response.
-        return NotFoundResponse($""TODO Item with ID: {itemId} not found."");
+        return NotFound($""TODO Item with ID: {itemId} not found."");
     }
     
     return todoItems[index];
@@ -407,11 +407,11 @@ get ""/{itemId}"" ObjectResponse<TodoItem> | NotFoundResponse (route Guid itemId
     #description: Adds a new todo item.
 */
 [Authorize(Roles = ""Administrator"")]
-post ""/"" SuccessResponse (body TodoItem newItem)
+post ""/"" Ok (body TodoItem newItem)
 {
     todoItems.Add(newItem);
     
-    return SuccessResponse();
+    return Ok();
 }
 
 
@@ -421,7 +421,7 @@ post ""/"" SuccessResponse (body TodoItem newItem)
     #itemId: ID of the todo item.
 */
 [Authorize(Roles = ""Administrator"")]
-put ""/{itemId}"" SuccessResponse | NotFoundResponse  (
+put ""/{itemId}"" Ok | NotFound<string>  (
     route Guid itemId,
     body TodoItem updateItem)
 {
@@ -430,12 +430,12 @@ put ""/{itemId}"" SuccessResponse | NotFoundResponse  (
     if (index < 0)
     {
         // Item with the ID not found, return a not found error response.
-        return NotFoundResponse($""TODO Item with ID: {itemId} not found."");
+        return NotFound($""TODO Item with ID: {itemId} not found."");
     }
     
     todoItems[index] = updateItem;
     
-    return SuccessResponse();
+    return Ok();
 }
 
 /*
@@ -443,19 +443,19 @@ put ""/{itemId}"" SuccessResponse | NotFoundResponse  (
     #itemId: ID of the todo item.
 */
 [Authorize(Roles = ""Administrator"")]
-delete ""/{itemId}"" NoContentResponse | NotFoundResponse (route Guid itemId)
+delete ""/{itemId}"" NoContent | NotFound<string> (route Guid itemId)
 {
     var index = FindIndexById(itemId);
     
     if (index < 0)
     {
         // Item with the ID not found, return a not found error response.
-        return NotFoundResponse($""TODO Item with ID: {itemId} not found."");
+        return NotFound($""TODO Item with ID: {itemId} not found."");
     }
     
     todoItems.RemoveAt(index);
     
-    return NoContentResponse();
+    return NoContent();
 }";
 
             var syntaxTree = SyntaxTree.Parse(text);

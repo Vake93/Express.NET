@@ -136,6 +136,54 @@ namespace Express.Net.CodeAnalysis
             return CSharp.SyntaxFactory.List(csharpAttributeList);
         }
 
+        private static SyntaxList<CSharpSyntax.AttributeListSyntax> BuildResponseTypeAttributeLists(
+            SyntaxList<CSharpSyntax.AttributeListSyntax> attributeLists,
+            EndpointReturnTypesSyntax returnTypes)
+        {
+            foreach (var returnType in returnTypes.Types)
+            {
+                var responseType = ResponseTypeResolver.GetResponseType(returnType);
+                var responseCode = ResponseTypeResolver.GetResponseCode(returnType);
+
+                var attribute = CSharp.SyntaxFactory.Attribute(CSharp.SyntaxFactory
+                    .IdentifierName(Constants.ProducesResponseTypeAttribute));
+
+                var responseCodeArgument = CSharp.SyntaxFactory.AttributeArgument(
+                    CSharp.SyntaxFactory.LiteralExpression(
+                        CSharp.SyntaxKind.NumericLiteralExpression,
+                        CSharp.SyntaxFactory.Literal(responseCode)));
+
+                if (string.IsNullOrEmpty(responseType))
+                {
+                    var argumentList = CSharp.SyntaxFactory.AttributeArgumentList(
+                        CSharp.SyntaxFactory.SingletonSeparatedList(responseCodeArgument));
+
+                    attribute = attribute.WithArgumentList(argumentList);
+                }
+                else
+                {
+                    var argumentList = CSharp.SyntaxFactory.AttributeArgumentList(
+                        CSharp.SyntaxFactory.SeparatedList<CSharpSyntax.AttributeArgumentSyntax>(
+                            new SyntaxNodeOrToken[]
+                            {
+                                CSharp.SyntaxFactory.AttributeArgument(
+                                    CSharp.SyntaxFactory.TypeOfExpression(
+                                        CSharp.SyntaxFactory.IdentifierName(responseType))),
+                                CSharp.SyntaxFactory.Token(CSharp.SyntaxKind.CommaToken),
+                                responseCodeArgument
+                            }));
+
+                    attribute = attribute.WithArgumentList(argumentList);
+                }
+
+                attributeLists = attributeLists.Add(
+                    CSharp.SyntaxFactory.AttributeList(
+                        CSharp.SyntaxFactory.SingletonSeparatedList(attribute)));
+            }
+
+            return attributeLists;
+        }
+
         private static CSharpSyntax.ParameterListSyntax BuildParameterList(EndpointParameterListSyntax parameterList)
         {
             var parameters = new List<CSharpSyntax.ParameterSyntax>();
@@ -347,12 +395,12 @@ namespace Express.Net.CodeAnalysis
                     BuildTokenList(CSharp.SyntaxKind.PublicKeyword, CSharp.SyntaxKind.AsyncKeyword) :
                     BuildTokenList(CSharp.SyntaxKind.PublicKeyword);
 
-                var returnType = endpointDeclaration.AsyncCode ?
+                var methodReturnType = endpointDeclaration.AsyncCode ?
                     CSharp.SyntaxFactory.ParseTypeName(Constants.AsyncEndpointDeclarationReturnType) :
                     CSharp.SyntaxFactory.ParseTypeName(Constants.SyncEndpointDeclarationReturnType);
 
                 var methodDeclaration = CSharp.SyntaxFactory
-                    .MethodDeclaration(returnType, BuildMethodName(endpointDeclaration, index))
+                    .MethodDeclaration(methodReturnType, BuildMethodName(endpointDeclaration, index))
                     .WithModifiers(modifiers)
                     .WithParameterList(BuildParameterList(parameterList));
 
@@ -378,8 +426,11 @@ namespace Express.Net.CodeAnalysis
                     statements.Add(csharpStatement);
                 }
 
+                var attributes = BuildAttributeLists(attributeList, kind, route);
+                attributes = BuildResponseTypeAttributeLists(attributes, endpointDeclaration.ReturnTypes);
+
                 methodDeclaration = methodDeclaration
-                    .WithAttributeLists(BuildAttributeLists(attributeList, kind, route))
+                    .WithAttributeLists(attributes)
                     .WithBody(CSharp.SyntaxFactory.Block(statements));
 
                 members.Add(methodDeclaration);

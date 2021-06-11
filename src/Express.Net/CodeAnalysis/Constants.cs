@@ -31,6 +31,7 @@ namespace Express.Net.CodeAnalysis
         public const string FromRouteAttribute = "FromRoute";
         public const string FromHeaderAttribute = "FromHeader";
         public const string FromServicesAttribute = "FromServices";
+        public const string ProducesResponseTypeAttribute = "ProducesResponseType";
 
         public const string AsyncEndpointDeclarationReturnType = "Task<IResult>";
         public const string SyncEndpointDeclarationReturnType = "IResult";
