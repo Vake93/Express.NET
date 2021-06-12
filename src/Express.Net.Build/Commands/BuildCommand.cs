@@ -131,20 +131,13 @@ namespace Express.Net.Build.Commands
                 return -1;
             }
 
+            AnsiConsole.WriteLine("Copying express framework assemblies");
+            ExpressDependencies.CopyFrameworkAssemblies(project, output);
+
             if (packageAssemblies.Any())
             {
                 AnsiConsole.WriteLine("Copying package assemblies");
-
-                var assemblyFiles = packageAssemblies.SelectMany(pa => pa.PackageFiles);
-
-                foreach (var assemblyFile in assemblyFiles)
-                {
-                    var name = Path.GetFileName(assemblyFile);
-                    var from = Path.Combine(projectFolder, assemblyFile);
-                    var to = Path.Combine(output, name);
-
-                    File.Copy(from, to);
-                }
+                ExpressDependencies.CopyPackageAssemblies(packageAssemblies, projectFolder, output);
             }
 
             AnsiConsole.WriteLine("Build completed successfully.");

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -20,6 +20,33 @@
     <Content Include="Samples\**">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <EmbeddedResource Include="..\Library\Runtime\Express.Net.Base.dll">
+      <LogicalName>Express.Net.Base</LogicalName>
+      <Link>Resources\Express.Net.Base.dll</Link>
+    </EmbeddedResource>
+
+    <EmbeddedResource Include="..\Library\Runtime\Microsoft.OpenApi.dll">
+      <LogicalName>Microsoft.OpenApi</LogicalName>
+      <Link>Resources\Microsoft.OpenApi.dll</Link>
+    </EmbeddedResource>
+
+    <EmbeddedResource Include="..\Library\Runtime\Swashbuckle.AspNetCore.Swagger.dll">
+      <LogicalName>Swashbuckle.AspNetCore.Swagger</LogicalName>
+      <Link>Resources\Swashbuckle.AspNetCore.Swagger.dll</Link>
+    </EmbeddedResource>
+
+    <EmbeddedResource Include="..\Library\Runtime\Swashbuckle.AspNetCore.SwaggerGen.dll">
+      <LogicalName>Swashbuckle.AspNetCore.SwaggerGen</LogicalName>
+      <Link>Resources\Swashbuckle.AspNetCore.SwaggerGen.dll</Link>
+    </EmbeddedResource>
+
+    <EmbeddedResource Include="..\Library\Runtime\Swashbuckle.AspNetCore.SwaggerUI.dll">
+      <LogicalName>Swashbuckle.AspNetCore.SwaggerUI</LogicalName>
+      <Link>Resources\Swashbuckle.AspNetCore.SwaggerUI.dll</Link>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

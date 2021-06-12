@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Reflection;
-using System.Text;
 
 namespace Express.Net.Reference.Assemblies
 {
@@ -36,19 +35,6 @@ namespace Express.Net.Reference.Assemblies
             if (resource == null)
             {
                 resource = GetResourceBlob(name);
-            }
-
-            return resource;
-        }
-
-        public static string GetOrCreateResource(ref string resource, string name)
-        {
-            if (resource == null)
-            {
-                var stream = GetResourceStream(name);
-                var streamReader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: true);
-
-                resource = streamReader.ReadToEnd();
             }
 
             return resource;
