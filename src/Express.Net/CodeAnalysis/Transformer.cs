@@ -162,13 +162,14 @@ namespace Express.Net.CodeAnalysis
                 }
                 else
                 {
+                    var type = CSharp.SyntaxFactory.ParseTypeName(responseType);
+
                     var argumentList = CSharp.SyntaxFactory.AttributeArgumentList(
                         CSharp.SyntaxFactory.SeparatedList<CSharpSyntax.AttributeArgumentSyntax>(
                             new SyntaxNodeOrToken[]
                             {
                                 CSharp.SyntaxFactory.AttributeArgument(
-                                    CSharp.SyntaxFactory.TypeOfExpression(
-                                        CSharp.SyntaxFactory.IdentifierName(responseType))),
+                                    CSharp.SyntaxFactory.TypeOfExpression(type)),
                                 CSharp.SyntaxFactory.Token(CSharp.SyntaxKind.CommaToken),
                                 responseCodeArgument
                             }));
