@@ -27,12 +27,12 @@ csharp
     }
 }
 
-get Ok (query int limit = 10, query int skip = 0)
+get Ok<IList<TodoItem>> (query int limit = 10, query int skip = 0)
 {
     return Ok(todoItems.Skip(skip).Take(limit));
 }
 
-get "{itemId}" Ok | NotFound (route Guid itemId)
+get "{itemId}" Ok<TodoItem> | NotFound<string> (route Guid itemId)
 {
     var index = FindIndexById(itemId);
     
@@ -52,7 +52,7 @@ post Ok (body TodoItem newItem)
     return Ok();
 }
 
-put "{itemId}" Ok | NotFound  (
+put "{itemId}" Ok | NotFound<string>  (
     route Guid itemId,
     body TodoItem updateItem)
 {
@@ -69,7 +69,7 @@ put "{itemId}" Ok | NotFound  (
     return Ok();
 }
 
-delete "{itemId}" NoContent | NotFound (route Guid itemId)
+delete "{itemId}" NoContent | NotFound<string> (route Guid itemId)
 {
     var index = FindIndexById(itemId);
     

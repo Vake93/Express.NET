@@ -24,7 +24,7 @@ namespace Express.Net.Tests
             var project = new Project(packageReferences, LibraryReferences: null, GenerateSwaggerDoc: false, AddSwaggerUI: false);
             var bootstrapper = new BasicBootstrapper("TestProject", addSwagger: false, addSwaggerUI: false);
             var tempPath = Path.GetTempPath();
-            var nuGetClient = new NuGetClient(project, bootstrapper, configuration, tempPath);
+            var nuGetClient = new NuGetClient(project, configuration, tempPath);
 
             var packageAssemblies = await nuGetClient
                 .RestoreProjectDependenciesAsync()

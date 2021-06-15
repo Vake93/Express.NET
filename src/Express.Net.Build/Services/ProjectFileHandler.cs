@@ -5,13 +5,21 @@ using System.Text.Json;
 
 namespace Express.Net.Build.Services
 {
-    public static class ProjectFileBuilder
+    internal static class ProjectFileHandler
     {
         private static readonly JsonSerializerOptions _jsonSerializerOptions = new ()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             WriteIndented = true,
+            PropertyNameCaseInsensitive = true,
         };
+
+        public static Project? ReadProjectFile(
+            string projectFilePath)
+        {
+            var projectJson = File.ReadAllText(projectFilePath);
+            return JsonSerializer.Deserialize<Project>(projectJson, _jsonSerializerOptions);
+        }
 
         public static void BuildProjectFile(
             string projectName,
@@ -30,15 +38,17 @@ namespace Express.Net.Build.Services
             File.WriteAllText(path, jsonText);
         }
 
-        public static void BuildServiceFile(string outputDirectory)
+        public static void BuildServiceFile(
+            string projectName,
+            string outputDirectory)
         {
-            var source = @"
-service HelloWorldService;
+            var source = $@"
+service {projectName};
 
 get Ok ()
-{
+{{
     return Ok(""Hello World"");
-}".Trim();
+}}".Trim();
             var fileName = $"HelloWorldService.en";
             var path = Path.Combine(outputDirectory, fileName);
 

@@ -1,4 +1,6 @@
 {
   "packageReferences": [],
-  "libraryReferences": []
+  "libraryReferences": [],
+  "generateSwaggerDoc": true,
+  "addSwaggerUI": true
 }

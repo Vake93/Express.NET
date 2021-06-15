@@ -17,12 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Samples\**">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  
-  <ItemGroup>
     <EmbeddedResource Include="..\Library\Runtime\Express.Net.Base.dll">
       <LogicalName>Express.Net.Base</LogicalName>
       <Link>Resources\Express.Net.Base.dll</Link>

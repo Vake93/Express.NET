@@ -2,7 +2,7 @@
   "profiles": {
     "Express.Build": {
       "commandName": "Project",
-      "commandLineArgs": "run -i Samples\\HelloWorld"
+      "commandLineArgs": "run -i ../../../../Examples/Todo"
     }
   }
 }

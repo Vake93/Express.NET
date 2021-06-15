@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Express.Net.Build.Services
 {
-    public static class ExpressDependencies
+    internal static class ExpressDependencies
     {
         public static bool CopyFrameworkAssemblies(Project project, string outputPath)
         {

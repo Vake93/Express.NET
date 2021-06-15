@@ -45,10 +45,10 @@ namespace Express.Net.Build.Commands
             Directory.CreateDirectory(projectDirectory);
 
             AnsiConsole.WriteLine($"Creating project file.");
-            ProjectFileBuilder.BuildProjectFile(settings.Name, projectDirectory);
+            ProjectFileHandler.BuildProjectFile(settings.Name, projectDirectory);
 
             AnsiConsole.WriteLine($"Creating service file.");
-            ProjectFileBuilder.BuildServiceFile(projectDirectory);
+            ProjectFileHandler.BuildServiceFile(settings.Name, projectDirectory);
 
             AnsiConsole.WriteLine($"New project created.");
             return 0;

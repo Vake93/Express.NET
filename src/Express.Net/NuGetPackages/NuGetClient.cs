@@ -1,5 +1,4 @@
-﻿using Express.Net.Emit.Bootstrapping;
-using Express.Net.Models;
+﻿using Express.Net.Models;
 using Express.Net.Models.NuGet;
 using Express.Net.Packages.Services;
 using NuGet.Common;
@@ -43,20 +42,17 @@ namespace Express.Net.Packages
         private readonly ISettings _nugetSettings;
         private readonly ILogger _logger;
 
-        private readonly Bootstrapper _bootstrapper;
         private readonly string _projectPath;
         private readonly string _packagePath;
         private readonly Project _project;
 
         public NuGetClient(
             Project project,
-            Bootstrapper bootstrapper,
             string configuration,
             string projectPath,
             ILogger? logger = null)
         {
             _packagePath = Path.Combine(projectPath, objDirectoryName, configuration);
-            _bootstrapper = bootstrapper;
             _projectPath = projectPath;
             _project = project;
 
