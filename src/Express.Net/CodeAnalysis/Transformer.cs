@@ -148,12 +148,9 @@ namespace Express.Net.CodeAnalysis
                 var attribute = CSharp.SyntaxFactory.Attribute(CSharp.SyntaxFactory
                     .IdentifierName(Constants.ProducesResponseTypeAttribute));
 
-                var responseCodeArgument = CSharp.SyntaxFactory.AttributeArgument(
-                    CSharp.SyntaxFactory.LiteralExpression(
-                        CSharp.SyntaxKind.NumericLiteralExpression,
-                        CSharp.SyntaxFactory.Literal(responseCode)));
+                var responseCodeArgument = CSharp.SyntaxFactory.AttributeArgument(responseCode);
 
-                if (string.IsNullOrEmpty(responseType))
+                if (responseType == null)
                 {
                     var argumentList = CSharp.SyntaxFactory.AttributeArgumentList(
                         CSharp.SyntaxFactory.SingletonSeparatedList(responseCodeArgument));
@@ -162,15 +159,18 @@ namespace Express.Net.CodeAnalysis
                 }
                 else
                 {
-                    var type = CSharp.SyntaxFactory.ParseTypeName(responseType);
+                    var responseTypeArgument = CSharp.SyntaxFactory.AttributeArgument(
+                        CSharp.SyntaxFactory.TypeOfExpression(responseType));
+
+                    var argumentSeperator = CSharp.SyntaxFactory.Token(
+                        CSharp.SyntaxKind.CommaToken);
 
                     var argumentList = CSharp.SyntaxFactory.AttributeArgumentList(
                         CSharp.SyntaxFactory.SeparatedList<CSharpSyntax.AttributeArgumentSyntax>(
                             new SyntaxNodeOrToken[]
                             {
-                                CSharp.SyntaxFactory.AttributeArgument(
-                                    CSharp.SyntaxFactory.TypeOfExpression(type)),
-                                CSharp.SyntaxFactory.Token(CSharp.SyntaxKind.CommaToken),
+                                responseTypeArgument,
+                                argumentSeperator,
                                 responseCodeArgument
                             }));
 
@@ -261,7 +261,7 @@ namespace Express.Net.CodeAnalysis
         private static CSharpSyntax.BaseListSyntax BuildBaseClassList(params string[] classNames)
         {
             static CSharpSyntax.BaseTypeSyntax ToSimpleBaseType(string identifierName) =>
-                CSharp.SyntaxFactory.SimpleBaseType(CSharp.SyntaxFactory.IdentifierName(identifierName));
+                CSharp.SyntaxFactory.SimpleBaseType(CSharp.SyntaxFactory.ParseTypeName(identifierName));
 
             return CSharp.SyntaxFactory.BaseList(CSharp.SyntaxFactory.SeparatedList(classNames.Select(ToSimpleBaseType)));
         }
