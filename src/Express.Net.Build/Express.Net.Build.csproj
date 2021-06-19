@@ -6,6 +6,9 @@
     <TargetFramework>net5.0</TargetFramework>
     <PackageDescription>A fast DSL for build microservices.</PackageDescription>
     <Authors>Vishvaka Ranasinghe</Authors>
+    <Description>Express.NET is a DSL for build fast web services effortlessly. This builds on top of .NET / ASP.NET 5.</Description>
+    <Copyright>2021 Vishvaka Ranasinghe</Copyright>
+    <RepositoryUrl>https://github.com/Vake93/Express.NET</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
