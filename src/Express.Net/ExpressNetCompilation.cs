@@ -1,4 +1,5 @@
-﻿using Express.Net.CodeAnalysis.Text;
+﻿using Express.Net.CodeAnalysis.Diagnostics;
+using Express.Net.CodeAnalysis.Text;
 using Express.Net.Emit;
 using Express.Net.Emit.Bootstrapping;
 using Express.Net.Models.NuGet;
@@ -63,18 +64,25 @@ namespace Express.Net
         {
             var diagnostics = ImmutableArray.CreateBuilder<Diagnostic>();
 
-            var exit = ValidateCompilation(diagnostics);
+            var validateOk = ValidateCompilation(diagnostics);
 
-            if (exit)
+            if (!validateOk)
             {
                 return new EmitResult(false, diagnostics.ToImmutable());
             }
 
-            var configuration = ParseConfiguration();
-            var csharpSyntaxTrees = TransformSyntaxTrees(diagnostics, configuration, ref exit)
-                .Append(_bootstrapper!.GetBootstrapper());
+            if (_bootstrapper is null)
+            {
+                throw new ArgumentNullException(nameof(_bootstrapper));
+            }
 
-            if (exit)
+            var bootstrapper = _bootstrapper.GetBootstrapper();
+            var configuration = ParseConfiguration();
+
+            var syntaxTrees = TransformSyntaxTrees(diagnostics, configuration)
+                .Append(bootstrapper);
+
+            if (diagnostics.Where(d => d.DiagnosticType == DiagnosticType.Error).Any())
             {
                 return new EmitResult(false, diagnostics.ToImmutable());
             }
@@ -89,7 +97,7 @@ namespace Express.Net
                 .WithOptimizationLevel(configuration)
                 .WithPlatform(Platform.AnyCpu))
                 .WithReferences(references)
-                .AddSyntaxTrees(csharpSyntaxTrees);
+                .AddSyntaxTrees(syntaxTrees);
 
             var result = compilation.Emit(
                 Path.Combine(_output, assemblyName),
@@ -100,47 +108,47 @@ namespace Express.Net
                 diagnostics.Add(Diagnostic.FromCSharpDiagnostic(diagnostic));
             }
 
-            return new EmitResult(result.Success, diagnostics.ToImmutable(), _output, assemblyName, csharpSyntaxTrees.ToImmutableArray());
+            return new EmitResult(result.Success, diagnostics.ToImmutable(), _output, assemblyName, syntaxTrees.ToImmutableArray());
         }
 
         private bool ValidateCompilation(ImmutableArray<Diagnostic>.Builder diagnostics)
         {
-            var exit = false;
+            var error = false;
 
             if (!Directory.Exists(_output))
             {
                 diagnostics.Add(Diagnostic.Error(new TextLocation(), "Invalid output directory."));
-                exit = true;
+                error = true;
             }
 
             if (string.IsNullOrEmpty(_projectName))
             {
                 diagnostics.Add(Diagnostic.Error(new TextLocation(), "Invalid assembly name."));
-                exit = true;
+                error = true;
             }
 
             if (_syntaxTrees is null || _syntaxTrees.Length == 0)
             {
                 diagnostics.Add(Diagnostic.Error(new TextLocation(), "At least one syntax tree is required."));
-                exit = true;
+                error = true;
             }
 
             if (_targetFrameworks is null || _targetFrameworks.Length == 0)
             {
                 diagnostics.Add(Diagnostic.Error(new TextLocation(), "At least one target framework is required."));
-                exit = true;
+                error = true;
             }
 
             if (_bootstrapper is null)
             {
                 diagnostics.Add(Diagnostic.Error(new TextLocation(), "Bootstrapper not set."));
-                exit = true;
+                error = true;
             }
 
-            return exit;
+            return !error;
         }
 
-        private CSharpSyntaxTree[] TransformSyntaxTrees(ImmutableArray<Diagnostic>.Builder diagnostics, OptimizationLevel configuration, ref bool exit)
+        private CSharpSyntaxTree[] TransformSyntaxTrees(ImmutableArray<Diagnostic>.Builder diagnostics, OptimizationLevel configuration)
         {
             var csharpSyntaxTrees = new CSharpSyntaxTree[_syntaxTrees!.Length];
 
@@ -153,9 +161,6 @@ namespace Express.Net
                 if (transformDiagnostics.Any())
                 {
                     diagnostics.AddRange(transformDiagnostics);
-
-                    exit = true;
-                    break;
                 }
             }
 
