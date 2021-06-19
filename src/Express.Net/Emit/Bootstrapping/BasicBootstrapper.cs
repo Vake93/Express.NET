@@ -78,7 +78,7 @@ CreateHostBuilder(args).Build().Run();";
 
             codeBuilder.AppendLine(_code.Replace("{ProjectName}", _projectName));
 
-            return SyntaxFactory.ParseSyntaxTree(codeBuilder.ToString());
+            return SyntaxFactory.ParseSyntaxTree(codeBuilder.ToString(), path: "Program.cs", encoding: Encoding.UTF8);
         }
     }
 }

@@ -71,7 +71,8 @@ namespace Express.Net
             }
 
             var configuration = ParseConfiguration();
-            var csharpSyntaxTrees = TransformSyntaxTrees(diagnostics, configuration, ref exit);
+            var csharpSyntaxTrees = TransformSyntaxTrees(diagnostics, configuration, ref exit)
+                .Append(_bootstrapper!.GetBootstrapper());
 
             if (exit)
             {
@@ -88,8 +89,7 @@ namespace Express.Net
                 .WithOptimizationLevel(configuration)
                 .WithPlatform(Platform.AnyCpu))
                 .WithReferences(references)
-                .AddSyntaxTrees(csharpSyntaxTrees)
-                .AddSyntaxTrees(_bootstrapper!.GetBootstrapper());
+                .AddSyntaxTrees(csharpSyntaxTrees);
 
             var result = compilation.Emit(
                 Path.Combine(_output, assemblyName),
