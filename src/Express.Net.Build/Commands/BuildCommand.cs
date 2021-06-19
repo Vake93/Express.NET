@@ -1,5 +1,4 @@
 ﻿using Express.Net.Build.Services;
-using Spectre.Console;
 using Spectre.Console.Cli;
 using System;
 using System.ComponentModel;
@@ -32,24 +31,24 @@ namespace Express.Net.Build.Commands
                     settings.ProjectFolder,
                     settings.Output,
                     settings.Configuration,
-                    AnsiConsole.WriteLine);
+                    Logger.LogInfo);
 
                 if (result.Success)
                 {
                     return 0;
                 }
 
-                AnsiConsole.WriteLine("Build Error.");
+                Logger.LogError("Build Error.");
 
                 foreach (var diagnostic in result.Diagnostics)
                 {
-                    AnsiConsole.WriteLine(diagnostic.Message);
+                    Logger.WriteLine(diagnostic.Message);
                 }
             }
             catch (Exception ex)
             {
-                AnsiConsole.WriteLine("Build Failed.");
-                AnsiConsole.WriteException(ex);
+                Logger.LogError("Build Failed.");
+                Logger.WriteException(ex);
             }
 
             return -1;

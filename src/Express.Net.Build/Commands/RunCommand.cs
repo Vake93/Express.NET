@@ -1,5 +1,4 @@
 ﻿using Express.Net.Build.Services;
-using Spectre.Console;
 using Spectre.Console.Cli;
 using System;
 using System.ComponentModel;
@@ -23,7 +22,7 @@ namespace Express.Net.Build.Commands
             {
                 var result = BuildService.BuildProject(
                     settings.ProjectFolder,
-                    logger: AnsiConsole.WriteLine);
+                    logger: Logger.LogInfo);
 
                 if (result.Success)
                 {
@@ -37,8 +36,10 @@ namespace Express.Net.Build.Commands
                     process.StartInfo.RedirectStandardInput = false;
                     process.StartInfo.RedirectStandardOutput = false;
 
-                    AnsiConsole.WriteLine($"Starting Project");
-                    AnsiConsole.WriteLine();
+                    Logger.LogInfo("Starting .NET Runtime");
+                    Logger.LogInfo(string.Empty);
+
+                    Logger.LogInfo($"[bold]dotnet [italic]{result.BinaryFileName}[/][/]");
 
                     process.Start();
 
@@ -47,17 +48,17 @@ namespace Express.Net.Build.Commands
                     return process.ExitCode;
                 }
 
-                AnsiConsole.WriteLine("Build Error.");
+                Logger.LogError("Build Error.");
 
                 foreach (var diagnostic in result.Diagnostics)
                 {
-                    AnsiConsole.WriteLine(diagnostic.Message);
+                    Logger.WriteLine(diagnostic.Message);
                 }
             }
             catch (Exception ex)
             {
-                AnsiConsole.WriteLine("Build Failed.");
-                AnsiConsole.WriteException(ex);
+                Logger.LogError("Build Failed.");
+                Logger.WriteException(ex);
             }
 
             return -1;

@@ -1,5 +1,4 @@
 ﻿using Express.Net.Build.Services;
-using Spectre.Console;
 using Spectre.Console.Cli;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
@@ -27,7 +26,7 @@ namespace Express.Net.Build.Commands
         {
             if (string.IsNullOrEmpty(settings.Name) || NameRegex.IsMatch(settings.Name))
             {
-                AnsiConsole.WriteLine($"{settings.Name} is not a valid project name.");
+                Logger.LogError($"{settings.Name} is not a valid project name.");
                 return -1;
             }
 
@@ -37,20 +36,20 @@ namespace Express.Net.Build.Commands
 
             if (Directory.Exists(projectDirectory))
             {
-                AnsiConsole.WriteLine($"Directory {projectDirectory} already exists.");
+                Logger.LogError($"Directory {projectDirectory} already exists.");
                 return -1;
             }
 
-            AnsiConsole.WriteLine($"Creating project directory {projectDirectory}.");
+            Logger.LogInfo($"Creating project directory {projectDirectory}.");
             Directory.CreateDirectory(projectDirectory);
 
-            AnsiConsole.WriteLine($"Creating project file.");
+            Logger.LogInfo($"Creating project file.");
             ProjectFileHandler.BuildProjectFile(settings.Name, projectDirectory);
 
-            AnsiConsole.WriteLine($"Creating service file.");
+            Logger.LogInfo($"Creating service file.");
             ProjectFileHandler.BuildServiceFile(settings.Name, projectDirectory);
 
-            AnsiConsole.WriteLine($"New project created.");
+            Logger.LogInfo($"New project created.");
             return 0;
         }
     }
