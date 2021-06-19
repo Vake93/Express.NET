@@ -10,6 +10,8 @@ app.Configure(config =>
     config.AddCommand<RunCommand>("run");
 
     config.AddCommand<NewCommand>("new");
+
+    config.AddCommand<InspectCommand>("inspect");
 });
 
 app.Run(args);

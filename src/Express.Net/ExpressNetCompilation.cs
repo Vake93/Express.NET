@@ -100,7 +100,7 @@ namespace Express.Net
                 diagnostics.Add(Diagnostic.FromCSharpDiagnostic(diagnostic));
             }
 
-            return new EmitResult(result.Success, diagnostics.ToImmutable(), _output, assemblyName);
+            return new EmitResult(result.Success, diagnostics.ToImmutable(), _output, assemblyName, csharpSyntaxTrees.ToImmutableArray());
         }
 
         private bool ValidateCompilation(ImmutableArray<Diagnostic>.Builder diagnostics)

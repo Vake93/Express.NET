@@ -2,15 +2,22 @@
 using System;
 using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
+using CSharpSyntaxTree = Microsoft.CodeAnalysis.SyntaxTree;
 
 namespace Express.Net.Emit
 {
     public sealed class EmitResult
     {
-        internal EmitResult(bool success, ImmutableArray<Diagnostic> diagnostics, string? outputFolder = null, string? binaryFileName = null)
+        internal EmitResult(
+            bool success,
+            ImmutableArray<Diagnostic> diagnostics,
+            string? outputFolder = null,
+            string? binaryFileName = null,
+            ImmutableArray<CSharpSyntaxTree>? generatedSyntaxTrees = null)
         {
             Success = success;
             Diagnostics = new DiagnosticBag(diagnostics);
+            GeneratedSyntaxTrees = generatedSyntaxTrees;
 
             if (success)
             {
@@ -27,5 +34,7 @@ namespace Express.Net.Emit
         public string? OutputFolder { get; }
 
         public DiagnosticBag Diagnostics { get; }
+
+        public ImmutableArray<CSharpSyntaxTree>? GeneratedSyntaxTrees { get; }
     }
 }

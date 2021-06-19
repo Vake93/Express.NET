@@ -7,12 +7,13 @@ using Express.Net.Packages;
 using System;
 using System.IO;
 using System.Linq;
+using GeneratedSyntaxTrees = System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.SyntaxTree>;
 
 namespace Express.Net.Build.Services
 {
     internal static class BuildService
     {
-        public static EmitResult BuildProject(string? projectPath, string? outputPath = null, string? configuration = null, Action<string>? logger = null)
+        public static EmitResult BuildProject(string? projectPath, string? outputPath = null, string? configuration = null, Action<string>? logger = null, bool dumpGeneratedFiles = false)
         {
             var projectFolder = Path.GetFullPath(string.IsNullOrEmpty(projectPath) ?
                 Directory.GetCurrentDirectory() :
@@ -96,6 +97,13 @@ namespace Express.Net.Build.Services
                 }
             }
 
+            if (dumpGeneratedFiles)
+            {
+                logger?.Invoke("Saving generated C# files");
+
+                SaveGeneratedCSharpFiles(outputPath, projectFolder, result.GeneratedSyntaxTrees);
+            }
+
             return result;
         }
 
@@ -130,5 +138,29 @@ namespace Express.Net.Build.Services
 
             return syntaxTrees;
         }
+
+        private static void SaveGeneratedCSharpFiles(string? outputPath, string projectFolder, GeneratedSyntaxTrees? generatedSyntaxTrees)
+        {
+            if (!generatedSyntaxTrees.HasValue)
+            {
+                return;
+            }
+
+            var generatedSourceFolder = Path.GetFullPath(string.IsNullOrEmpty(outputPath) ?
+                Path.Combine(projectFolder, "obj", "Generated") :
+                Path.Combine(outputPath, "Generated"));
+
+            Directory.CreateDirectory(generatedSourceFolder);
+
+            foreach (var generatedSyntaxTree in generatedSyntaxTrees)
+            {
+                var fileName = Path.GetFileNameWithoutExtension(generatedSyntaxTree.FilePath);
+                var filePath = Path.Combine(generatedSourceFolder, $"{fileName}.cs");
+                var text = generatedSyntaxTree.ToString();
+
+                File.WriteAllText(filePath, text);
+            }
+        }
+
     }
 }

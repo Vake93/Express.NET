@@ -4,6 +4,7 @@ using Express.Net.CodeAnalysis.Syntax.Nodes;
 using Microsoft.CodeAnalysis;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using CSharp = Microsoft.CodeAnalysis.CSharp;
 using CSharpSyntax = Microsoft.CodeAnalysis.CSharp.Syntax;
 using CSharpSyntaxSyntaxNode = Microsoft.CodeAnalysis.SyntaxNode;
@@ -36,7 +37,7 @@ namespace Express.Net.CodeAnalysis
             compilationUnit = TransformServiceDeclarationSyntax(compilationUnit);
             compilationUnit = NormalizeWhitespace(compilationUnit);
 
-            return CSharp.SyntaxFactory.SyntaxTree(compilationUnit);
+            return CSharp.SyntaxFactory.SyntaxTree(compilationUnit, path : _syntaxTree.FileName ?? string.Empty, encoding: Encoding.UTF8);
         }
 
         private static SyntaxList<CSharpSyntax.AttributeListSyntax> BuildAttributeLists(AttributeListSyntax? attributeList, SyntaxKind syntaxKind, string? route = null)
