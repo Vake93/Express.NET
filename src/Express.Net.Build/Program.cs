@@ -4,12 +4,7 @@ using Spectre.Console.Cli;
 
 var app = new CommandApp();
 
-AnsiConsole.Render(
-    new FigletText("Express.NET")
-        .LeftAligned()
-        .Color(Color.Red));
-
-var rule = new Rule()
+var rule = new Rule("Express.NET")
 {
     Alignment = Justify.Center,
     Border = BoxBorder.Double,

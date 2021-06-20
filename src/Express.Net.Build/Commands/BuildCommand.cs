@@ -31,14 +31,14 @@ namespace Express.Net.Build.Commands
                     settings.ProjectFolder,
                     settings.Output,
                     settings.Configuration,
-                    Logger.LogInfo);
+                    Logger.LogInfo<BuildService>);
 
                 if (result.Success)
                 {
                     return 0;
                 }
 
-                Logger.LogError("Build Error.");
+                Logger.LogError<BuildCommand>("Build Error.");
 
                 foreach (var diagnostic in result.Diagnostics)
                 {
@@ -47,7 +47,7 @@ namespace Express.Net.Build.Commands
             }
             catch (Exception ex)
             {
-                Logger.LogError("Build Failed.");
+                Logger.LogError<BuildCommand>("Build Failed.");
                 Logger.WriteException(ex);
             }
 

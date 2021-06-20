@@ -43,13 +43,13 @@ namespace Express.Net.Build.Services
             string outputDirectory)
         {
             var source = $@"
-service {projectName};
+service {projectName}Service;
 
 get Ok ()
 {{
     return Ok(""Hello World"");
 }}".Trim();
-            var fileName = $"HelloWorldService.en";
+            var fileName = $"{projectName}Service.en";
             var path = Path.Combine(outputDirectory, fileName);
 
             File.WriteAllText(path, source);

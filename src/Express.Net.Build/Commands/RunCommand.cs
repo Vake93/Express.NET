@@ -22,7 +22,7 @@ namespace Express.Net.Build.Commands
             {
                 var result = BuildService.BuildProject(
                     settings.ProjectFolder,
-                    logger: Logger.LogInfo);
+                    logger: Logger.LogInfo<BuildService>);
 
                 if (result.Success)
                 {
@@ -36,10 +36,8 @@ namespace Express.Net.Build.Commands
                     process.StartInfo.RedirectStandardInput = false;
                     process.StartInfo.RedirectStandardOutput = false;
 
-                    Logger.LogInfo("Starting .NET Runtime");
-                    Logger.LogInfo(string.Empty);
-
-                    Logger.LogInfo($"[bold]dotnet [italic]{result.BinaryFileName}[/][/]");
+                    Logger.LogInfo<Process>("Starting .NET Runtime");
+                    Logger.LogInfo<Process>(string.Empty);
 
                     process.Start();
 
@@ -48,7 +46,7 @@ namespace Express.Net.Build.Commands
                     return process.ExitCode;
                 }
 
-                Logger.LogError("Build Error.");
+                Logger.LogError<RunCommand>("Build Error.");
 
                 foreach (var diagnostic in result.Diagnostics)
                 {
@@ -57,7 +55,7 @@ namespace Express.Net.Build.Commands
             }
             catch (Exception ex)
             {
-                Logger.LogError("Build Failed.");
+                Logger.LogError<RunCommand>("Build Failed.");
                 Logger.WriteException(ex);
             }
 

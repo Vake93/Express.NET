@@ -10,7 +10,7 @@ namespace Express.Net.Build.Services
             AnsiConsole.MarkupLine(message);
         }
 
-        public static void LogInfo(string message)
+        public static void LogInfo<T>(string message)
         {
             if (string.IsNullOrEmpty(message))
             {
@@ -18,10 +18,13 @@ namespace Express.Net.Build.Services
                 return;
             }
 
-            AnsiConsole.MarkupLine($"[bold green]info[/]: {message}");
+            var name = typeof(T).FullName;
+
+            AnsiConsole.MarkupLine($"[bold green]info[/]: {name}");
+            AnsiConsole.MarkupLine($"      {message}");
         }
 
-        public static void LogError(string message)
+        public static void LogError<T>(string message)
         {
             if (string.IsNullOrEmpty(message))
             {
@@ -29,7 +32,10 @@ namespace Express.Net.Build.Services
                 return;
             }
 
-            AnsiConsole.MarkupLine($"[bold red]fail[/]: {message}");
+            var name = typeof(T).FullName;
+
+            AnsiConsole.MarkupLine($"[bold red]fail[/]: {name}");
+            AnsiConsole.MarkupLine($"      {message}");
         }
 
         public static void WriteException(Exception exception)

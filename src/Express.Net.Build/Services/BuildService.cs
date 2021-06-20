@@ -11,7 +11,7 @@ using GeneratedSyntaxTrees = System.Collections.Immutable.ImmutableArray<Microso
 
 namespace Express.Net.Build.Services
 {
-    internal static class BuildService
+    internal class BuildService
     {
         public static EmitResult BuildProject(string? projectPath, string? outputPath = null, string? configuration = null, Action<string>? logger = null, bool dumpGeneratedFiles = false)
         {

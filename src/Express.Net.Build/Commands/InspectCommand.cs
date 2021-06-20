@@ -27,7 +27,7 @@ namespace Express.Net.Build.Commands
                     settings.ProjectFolder,
                     settings.Output,
                     "Release",
-                    logger: Logger.LogInfo,
+                    logger: Logger.LogInfo<BuildService>,
                     dumpGeneratedFiles: true);
 
                 if (result.Success)
@@ -35,7 +35,7 @@ namespace Express.Net.Build.Commands
                     return 0;
                 }
 
-                Logger.LogError("Build Error.");
+                Logger.LogError<InspectCommand>("Build Error.");
 
                 foreach (var diagnostic in result.Diagnostics)
                 {
@@ -44,7 +44,7 @@ namespace Express.Net.Build.Commands
             }
             catch (Exception ex)
             {
-                Logger.LogError("Build Failed.");
+                Logger.LogError<InspectCommand>("Build Failed.");
                 Logger.WriteException(ex);
             }
 

@@ -26,7 +26,7 @@ namespace Express.Net.Build.Commands
         {
             if (string.IsNullOrEmpty(settings.Name) || NameRegex.IsMatch(settings.Name))
             {
-                Logger.LogError($"{settings.Name} is not a valid project name.");
+                Logger.LogError<NewCommand>($"{settings.Name} is not a valid project name.");
                 return -1;
             }
 
@@ -36,20 +36,20 @@ namespace Express.Net.Build.Commands
 
             if (Directory.Exists(projectDirectory))
             {
-                Logger.LogError($"Directory {projectDirectory} already exists.");
+                Logger.LogError<NewCommand>($"Directory {projectDirectory} already exists.");
                 return -1;
             }
 
-            Logger.LogInfo($"Creating project directory {projectDirectory}.");
+            Logger.LogInfo<NewCommand>($"Creating project directory {projectDirectory}.");
             Directory.CreateDirectory(projectDirectory);
 
-            Logger.LogInfo($"Creating project file.");
+            Logger.LogInfo<NewCommand>($"Creating project file.");
             ProjectFileHandler.BuildProjectFile(settings.Name, projectDirectory);
 
-            Logger.LogInfo($"Creating service file.");
+            Logger.LogInfo<NewCommand>($"Creating service file.");
             ProjectFileHandler.BuildServiceFile(settings.Name, projectDirectory);
 
-            Logger.LogInfo($"New project created.");
+            Logger.LogInfo<NewCommand>($"New project created.");
             return 0;
         }
     }
