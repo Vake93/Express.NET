@@ -7,7 +7,7 @@ namespace Express.Net.Build.Services
     {
         public static void WriteLine(string message)
         {
-            AnsiConsole.MarkupLine(message);
+            AnsiConsole.MarkupLine(Markup.Escape(message));
         }
 
         public static void LogInfo<T>(string message)
@@ -21,7 +21,7 @@ namespace Express.Net.Build.Services
             var name = typeof(T).FullName;
 
             AnsiConsole.MarkupLine($"[bold green]info[/]: {name}");
-            AnsiConsole.MarkupLine($"      {message}");
+            AnsiConsole.MarkupLine($"      {Markup.Escape(message)}");
         }
 
         public static void LogError<T>(string message)
@@ -35,7 +35,7 @@ namespace Express.Net.Build.Services
             var name = typeof(T).FullName;
 
             AnsiConsole.MarkupLine($"[bold red]fail[/]: {name}");
-            AnsiConsole.MarkupLine($"      {message}");
+            AnsiConsole.MarkupLine($"      {Markup.Escape(message)}");
         }
 
         public static void WriteException(Exception exception)

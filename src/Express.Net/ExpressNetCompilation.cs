@@ -24,6 +24,7 @@ namespace Express.Net
         private readonly string _configuration;
 
         private SyntaxTree[]? _syntaxTrees;
+        private CSharpSyntaxTree[]? _csharpSyntaxTrees;
         private TargetFramework[]? _targetFrameworks;
         private Bootstrapper? _bootstrapper;
         private PackageAssembly[]? _packageAssemblies;
@@ -39,6 +40,12 @@ namespace Express.Net
         public ExpressNetCompilation SetSyntaxTrees(params SyntaxTree[] syntaxTrees)
         {
             _syntaxTrees = syntaxTrees;
+            return this;
+        }
+
+        public ExpressNetCompilation SetCSharpSyntaxTrees(params CSharpSyntaxTree[] syntaxTrees)
+        {
+            _csharpSyntaxTrees = syntaxTrees;
             return this;
         }
 
@@ -81,6 +88,11 @@ namespace Express.Net
 
             var syntaxTrees = TransformSyntaxTrees(diagnostics, configuration)
                 .Append(bootstrapper);
+
+            if (_csharpSyntaxTrees?.Length > 0)
+            {
+                syntaxTrees = syntaxTrees.Concat(_csharpSyntaxTrees);
+            }
 
             if (diagnostics.Where(d => d.DiagnosticType == DiagnosticType.Error).Any())
             {

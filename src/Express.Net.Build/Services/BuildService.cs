@@ -8,6 +8,9 @@ using System;
 using System.IO;
 using System.Linq;
 using GeneratedSyntaxTrees = System.Collections.Immutable.ImmutableArray<Microsoft.CodeAnalysis.SyntaxTree>;
+using CSharpSyntaxTree = Microsoft.CodeAnalysis.SyntaxTree;
+using CSharp = Microsoft.CodeAnalysis.CSharp;
+using System.Text;
 
 namespace Express.Net.Build.Services
 {
@@ -71,7 +74,14 @@ namespace Express.Net.Build.Services
                 throw new Exception("Unable locate any source files");
             }
 
-            var syntaxTrees = ParseSourceFiles(sourceFiles, logger);
+            compilation = compilation.SetSyntaxTrees(ParseSourceFiles(sourceFiles, logger));
+
+            var csharpSourceFiles = SourceFileDiscovery.GetCSharpSourceFilesInDirectory(projectFolder);
+
+            if (csharpSourceFiles.Length > 0)
+            {
+                compilation = compilation.SetCSharpSyntaxTrees(ParseCSharpSourceFiles(csharpSourceFiles, logger));
+            }
 
             logger?.Invoke($"Building Runtime Config");
 
@@ -79,9 +89,7 @@ namespace Express.Net.Build.Services
 
             logger?.Invoke($"Emiting IL");
 
-            var result = compilation
-                .SetSyntaxTrees(syntaxTrees)
-                .Emit();
+            var result = compilation.Emit();
 
             if (result.Success)
             {
@@ -126,6 +134,39 @@ namespace Express.Net.Build.Services
                     hasErrors = diagnostic.DiagnosticType == DiagnosticType.Error;
 
                     logger?.Invoke($"{diagnostic.DiagnosticType}: {diagnostic.Message} @ {diagnostic.Location}");
+                }
+
+                if (hasErrors)
+                {
+                    throw new Exception($"Syntax errors in {sourceFileName}");
+                }
+
+                syntaxTrees[i] = syntaxTree;
+            }
+
+            return syntaxTrees;
+        }
+
+        private static CSharpSyntaxTree[] ParseCSharpSourceFiles(string[] sourceFiles, Action<string>? logger)
+        {
+            var syntaxTrees = new CSharpSyntaxTree[sourceFiles.Length];
+
+            for (var i = 0; i < sourceFiles.Length; i++)
+            {
+                var sourceFile = sourceFiles[i];
+                var sourceFileName = Path.GetFileName(sourceFile);
+
+                logger?.Invoke($"Parsing file {sourceFileName}");
+                var sourceText = File.ReadAllText(sourceFile);
+                var syntaxTree = CSharp.CSharpSyntaxTree.ParseText(sourceText, path: sourceFile, encoding: Encoding.UTF8);
+
+                var hasErrors = false;
+
+                foreach (var diagnostic in syntaxTree.GetDiagnostics())
+                {
+                    hasErrors = diagnostic.Severity == Microsoft.CodeAnalysis.DiagnosticSeverity.Error;
+
+                    logger?.Invoke($"{diagnostic.Severity}: {diagnostic.GetMessage()} @ {diagnostic.Location}");
                 }
 
                 if (hasErrors)
