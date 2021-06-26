@@ -566,3 +566,4 @@ fabric.properties
 .DS_Store
 .vscode/tasks.json
 .vscode/launch.json
+*.vsix

@@ -1,0 +1,60 @@
+{
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Express.NET",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+		},
+		{
+			"include": "#constants"
+		},
+		{
+			"include": "#code"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [{
+				"name": "keyword.control.xps",
+				"match": "\\b(using|service|csharp|get|post|put|patch|delete|head|query|route|body|header|new)\\b"
+			}]
+		},
+		"strings": {
+			"name": "string.quoted.double.xps",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.xps",
+					"match": "\\\\."
+				}
+			]
+		},
+		"constants":{
+			"patterns": [
+				{
+					"name": "constant.numeric.xps",
+					"match": "\\b(0|[1-9][0-9]*)|(0|[1-9][0-9]*)n|([0-9]+(\\.[0-9]+)?|\\.[0-9]+)([eE][-+]?[0-9]+)?f\\b"
+				},
+				{
+					"name": "constant.language",
+					"match": "\\b(default|true|false|null)\\b"
+				}
+			]
+		},
+		"code":{
+			"begin": "\\{",
+			"end": "\\}",
+			"name": "meta.embedded.block.csharp",
+			"patterns": [
+				{
+				  "include": "source.cs"
+				}
+			  ]
+		}
+	},
+	"scopeName": "source.en"
+}
