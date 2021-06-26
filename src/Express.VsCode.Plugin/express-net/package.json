@@ -1,29 +1,35 @@
 {
-    "name": "express-net",
-    "displayName": "Express.NET",
-    "description": "Build fast web services effortlessly",
-    "publisher": "Vishvaka",
-    "version": "0.0.1",
-    "engines": {
-        "vscode": "^1.57.0"
-    },
-    "categories": [
-        "Programming Languages"
+  "name": "express-net",
+  "displayName": "Express.NET",
+  "description": "Build fast web services effortlessly",
+  "publisher": "Vishvaka",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.57.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "xps",
+        "aliases": [
+          "Express.NET",
+          "xps"
+        ],
+        "extensions": [
+          "en"
+        ],
+        "configuration": "./language-configuration.json"
+      }
     ],
-    "contributes": {
-        "languages": [{
-            "id": "xps",
-            "aliases": ["Express.NET", "xps"],
-            "extensions": ["en"],
-            "configuration": "./language-configuration.json"
-        }],
-        "grammars": [{
-            "language": "xps",
-            "scopeName": "source.en",
-            "path": "./syntaxes/xps.tmLanguage.json",
-            "embeddedLanguages":{
-                "meta.embedded.block.csharp": "csharp"
-            }
-        }]
-    }
+    "grammars": [
+      {
+        "language": "xps",
+        "scopeName": "source.en",
+        "path": "./syntaxes/xps.tmLanguage.json"
+      }
+    ]
+  }
 }
