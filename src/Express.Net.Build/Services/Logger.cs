@@ -5,6 +5,20 @@ namespace Express.Net.Build.Services
 {
     public static class Logger
     {
+        public static void WriteHeader()
+        {
+            AnsiConsole.Clear();
+
+            var rule = new Rule("Express.NET")
+            {
+                Alignment = Justify.Center,
+                Border = BoxBorder.Double,
+                Style = Style.Parse("red"),
+            };
+
+            AnsiConsole.Render(rule);
+        }
+
         public static void WriteLine(string message)
         {
             AnsiConsole.MarkupLine(Markup.Escape(message));

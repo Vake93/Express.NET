@@ -1,17 +1,10 @@
 ﻿using Express.Net.Build.Commands;
-using Spectre.Console;
+using Express.Net.Build.Services;
 using Spectre.Console.Cli;
 
 var app = new CommandApp();
 
-var rule = new Rule("Express.NET")
-{
-    Alignment = Justify.Center,
-    Border = BoxBorder.Double,
-    Style = Style.Parse("red"),
-};
-
-AnsiConsole.Render(rule);
+Logger.WriteHeader();
 
 app.Configure(config =>
 {
@@ -20,6 +13,8 @@ app.Configure(config =>
     config.AddCommand<RunCommand>("run");
 
     config.AddCommand<NewCommand>("new");
+
+    config.AddCommand<WatchCommand>("watch");
 
     config.AddCommand<InspectCommand>("inspect");
 });
