@@ -28,6 +28,28 @@ When the web service is started it should display the port the service is runnin
 
 ![Express.NET Hello World](https://raw.githubusercontent.com/Vake93/Express.NET/main/doc/images/xps-helloworld.gif)
 
+# Swagger at not extra code
+Express.NET generates OpenAPI documents and has built-in swagger support. No extra code required!
+
+```
+service PersonService;
+
+csharp
+{
+    public record Person (string Name, int Age);
+    public record Error (string Description);
+}
+
+get Ok<Person> | NotFound<Error> (query string name)
+{
+    if (name == "Vishvaka")
+        return Ok(new Person("Vishvaka", 28));
+    else
+        return NotFound(new Error($"Person with {name} not found."));
+}
+```
+![Express.NET Swagger Support](https://raw.githubusercontent.com/Vake93/Express.NET/main/doc/images/xps-swagger.gif)
+
 ## Still this is work in progress. Things Todo
 
 - [ ] Better diagnostic messages.
