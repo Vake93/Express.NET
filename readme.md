@@ -50,7 +50,57 @@ get Ok<Person> | NotFound<Error> (query string name)
 ```
 ![Express.NET Swagger Support](https://raw.githubusercontent.com/Vake93/Express.NET/main/doc/images/xps-swagger.gif)
 
-## Still this is work in progress. Things Todo
+# Consume NuGet Packages
+Bring in your favorite NuGet packgers. 
+
+Here is an example using ```StackExchange.Redis```
+
+Project File:
+```
+{
+  "packageReferences": [
+    {
+      "name": "StackExchange.Redis",
+      "version": "2.2.4"
+    }
+  ],
+  "libraryReferences": [],
+  "generateSwaggerDoc": true,
+  "addSwaggerUI": true
+}
+```
+Service File:
+```
+using System;
+using StackExchange.Redis;
+
+service NuGetDemoService;
+
+csharp
+{
+    private static ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost:6379");
+}
+
+get "ping" Ok<TimeSpan> ()
+{
+    var db = redis.GetDatabase();
+    var pong = await db.PingAsync();
+    return Ok(pong);
+}
+```
+![Express.NET NuGet Support](https://raw.githubusercontent.com/Vake93/Express.NET/main/doc/images/xps-nuget.gif)
+
+# Keep your flow with watch Command
+With watch command Express.NET will re-build your project as and when the changers are saved.
+
+Just run your project as
+```
+xps watch
+```
+
+![Express.NET watch](https://raw.githubusercontent.com/Vake93/Express.NET/main/doc/images/xps-watch.gif)
+
+# Still this is work in progress. Things Todo
 
 - [ ] Better diagnostic messages.
 - [ ] Write documentation on DSL syntax.
