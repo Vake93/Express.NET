@@ -5,32 +5,34 @@ This builds on top of .NET / ASP.NET 5.
 
 **This is my MSc Project.**
 
-### Below is a simple Hello World Web service in Express.NET
+# Hello world
+
+The "Hello, World" program is traditionally used to introduce a programming language. Here it is in Express.NET:
 
 ```
-service "hello" HelloWorldService;
+service HelloWorldService;
 
 get Ok ()
 {
     return Ok("Hello World from Express.NET!");
 }
-
-get "{name}" Ok (route string name)
-{
-    return Ok($"Hello {name} from Express.NET!");
-}
 ```
+
+To get started downloaded the xps binary from the releases section and run
+```
+xps new -n HelloWorld
+xps run -i .\HelloWorld\
+```
+
+When the web service is started it should display the port the service is running on, this is usually port 5000 for HTTP and port 5001 for HTTPS.
+
+
 
 ## Still this is work in progress. Things Todo
 
 - [ ] Better diagnostic messages.
-- [x] Add a concept of a project file.
-- [ ] OpenAPI specification auto generation.
-- [ ] Swagger support.
-- [x] VSCode debugger using pdb files. 
 - [ ] Write documentation on DSL syntax.
-- [ ] Add a way to add NuGet packagers to a project.
-- [ ] Easy database integrations.
+- [ ] Hooks into service startup.
 - [ ] Target .NET 6.
 
 ## Attributions
