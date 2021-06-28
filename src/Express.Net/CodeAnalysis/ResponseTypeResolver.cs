@@ -42,7 +42,7 @@ namespace Express.Net.CodeAnalysis
 
             if (type.TypeName.StartsWith("BadRequest"))
             {
-                responseCode = 404;
+                responseCode = 400;
             }
 
             if (type.TypeName.StartsWith("Redirect"))
