@@ -2,7 +2,7 @@
   "profiles": {
     "Express.Build": {
       "commandName": "Project",
-      "commandLineArgs": "watch -i ../../../../Examples/Todo"
+      "commandLineArgs": "build -i ../../../../Examples/Todo"
     }
   }
 }
