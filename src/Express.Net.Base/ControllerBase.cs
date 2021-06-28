@@ -34,12 +34,12 @@
 
         protected virtual IResult BadRequest()
         {
-            return new Response(statusCode: 401);
+            return new Response(statusCode: 400);
         }
 
         protected virtual IResult BadRequest(object? value)
         {
-            return new Response(value, 401);
+            return new Response(value, 400);
         }
 
         protected virtual IResult Redirect(string url, bool permanent = false)
