@@ -13,7 +13,7 @@ get Ok ()
 }
 ```
 
-To get started download the xps binary from the releases section and run
+To get started download the xps binary from the [releases section](https://github.com/Vake93/Express.NET/releases) and run
 ```
 xps new -n HelloWorld
 xps run -i .\HelloWorld\
