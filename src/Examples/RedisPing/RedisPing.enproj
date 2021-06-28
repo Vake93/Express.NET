@@ -1,0 +1,11 @@
+{
+  "packageReferences": [
+    {
+      "name": "StackExchange.Redis",
+      "version": "2.2.4"
+    }
+  ],
+  "libraryReferences": [],
+  "generateSwaggerDoc": true,
+  "addSwaggerUI": true
+}

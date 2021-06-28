@@ -1,0 +1,16 @@
+using System;
+using StackExchange.Redis;
+
+service Redis;
+
+csharp
+{
+    private static ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost:6379");
+}
+
+get "ping" Ok<TimeSpan> ()
+{
+    var db = redis.GetDatabase();
+    var pong = await db.PingAsync();
+    return Ok(pong);
+}

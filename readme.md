@@ -9,7 +9,7 @@ This builds on top of .NET / ASP.NET 5.
 
 The "Hello, World" program is traditionally used to introduce a programming language. Here it is in Express.NET:
 
-```
+```csharp
 service HelloWorldService;
 
 get Ok ()
@@ -31,7 +31,7 @@ When the web service is started it should display the port the service is runnin
 # Swagger at not extra code
 Express.NET generates OpenAPI documents and has built-in swagger support. No extra code required!
 
-```
+```csharp
 service PersonService;
 
 csharp
@@ -56,7 +56,7 @@ Bring in your favorite NuGet packgers.
 Here is an example using ```StackExchange.Redis```
 
 Project File:
-```
+```json
 {
   "packageReferences": [
     {
@@ -70,7 +70,7 @@ Project File:
 }
 ```
 Service File:
-```
+```csharp
 using System;
 using StackExchange.Redis;
 
@@ -100,11 +100,15 @@ xps watch
 
 ![Express.NET watch](https://raw.githubusercontent.com/Vake93/Express.NET/main/doc/images/xps-watch.gif)
 
+# Examples
+More examples can be found [here](https://github.com/Vake93/Express.NET/tree/main/src/Examples)
+
 # Still this is work in progress. Things Todo
 
 - [ ] Better diagnostic messages.
 - [ ] Write documentation on DSL syntax.
 - [ ] Hooks into service startup.
+- [ ] VS Code Extension.
 - [ ] Target .NET 6.
 
 ## Attributions
