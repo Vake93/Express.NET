@@ -18,7 +18,7 @@ get Ok ()
 }
 ```
 
-To get started downloaded the xps binary from the releases section and run
+To get started download the xps binary from the releases section and run
 ```
 xps new -n HelloWorld
 xps run -i .\HelloWorld\
