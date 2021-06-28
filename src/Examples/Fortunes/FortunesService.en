@@ -1,0 +1,61 @@
+using System;
+
+service "api" FortunesService;
+
+csharp
+{
+    private static Random _random = new Random();
+
+    private static string[] _enMessages = new []
+    {
+        "Your shoes will make you happy today.",
+        "LIFE CONSISTS NOT IN HOLDING GOOD CARDS, BUT IN PLAYING THOSE YOU HOLD WELL.",
+        "If winter comes, can spring be far behind?",
+        "Love can last a lifetime, if you want it to.",
+        "Adversity is the parent of virtue.",
+        "You cannot love life until you live the life you love.",
+        "It is now, and in this world, that we must live.",
+        "A new voyage will fill your life with untold memories.",
+        "You are very talented in many ways.",
+        "Our deeds determine us, as much as we determine our deeds.",
+        "Meeting adversity well is the source of your strength.",
+        "Today it's up to you to create the peacefulness you long for.",
+        "A smile is your passport into the hearts of others.",
+        "What ever you're goal is in life, embrace it visualize it, and for it will be yours.",
+        "A foolish man listens to his heart. A wise man listens to cookies."
+    };
+
+    private static string[] _zhMessages = new []
+    {
+        "有缘千里来相会",
+        "握住你的手，和你一起变老",
+        "情人眼里出西施",
+        "有情饮水饱，无情食饭饥",
+        "爱屋及乌",
+        "一日三秋",
+        "举案齐眉",
+        "生活有爱幸福,为爱生活愚蠢",
+        "有情人终成眷属",
+        "爱不释手",
+        " 笑一笑,十年少",
+        "不怕慢, 就怕停",
+        "水满则溢",
+        "留得青山在，不怕没柴烧",
+        "请教别人一次是五分钟的傻子，从不请教别人是一辈子的傻子"
+    };
+}
+
+get "{language}/fortunes" Ok | BadRequest (route string language)
+{
+    switch (language)
+    {
+        case "en":
+            return Ok(_enMessages[_random.Next(_enMessages.Length)]);
+        
+        case "zh":
+            return Ok(_zhMessages[_random.Next(_zhMessages.Length)]);
+
+        default:
+            return BadRequest("Supported languages are: [en, zh]");
+    }
+}
