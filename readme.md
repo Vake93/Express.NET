@@ -45,6 +45,13 @@ get Ok<Person> | NotFound<Error> (query string name)
 ```
 ![Express.NET Swagger Support](https://raw.githubusercontent.com/Vake93/Express.NET/main/doc/images/xps-swagger.gif)
 
+# C# 9 Source File Support
+You can have Express.NET DSL and C# source files in the same project!
+In the [weather forecast](https://github.com/Vake93/Express.NET/tree/main/src/Examples/WeatherForecast) example, there is a combination of Express.NET DSL and C# source files.
+Select the language which best suites your need.
+
+![Weather Forecast Example Code](https://raw.githubusercontent.com/Vake93/Express.NET/main/doc/images/xps-csharp.png)
+
 # Consume NuGet Packages
 Bring in your favorite NuGet packgers. 
 
@@ -98,12 +105,14 @@ xps watch
 # Examples
 More examples can be found [here](https://github.com/Vake93/Express.NET/tree/main/src/Examples)
 
-# Still this is work in progress. Things Todo
+# Things that require imporments
+
+This project is work in progress. Following imporments are still required:
 
 - [ ] Better diagnostic messages.
 - [ ] Write documentation on DSL syntax.
 - [ ] Hooks into service startup.
-- [ ] VS Code Extension.
+- [ ] [VS Code Extension.](https://github.com/Vake93/Express.NET/tree/main/src/Express.VsCode.Plugin/express-net)
 - [ ] Target .NET 6.
 
 ## Attributions
