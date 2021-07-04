@@ -47,7 +47,7 @@ get "{itemId}" Ok<TodoItem> | NotFound<string> (route Guid itemId)
 
 post Ok (body TodoItem newItem)
 {
-    todoItems.Add(newItem);
+    todoItems.Add(newItem with { Id = Guid.NewGuid()});
     
     return Ok();
 }
