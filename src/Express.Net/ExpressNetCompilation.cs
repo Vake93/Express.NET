@@ -5,6 +5,8 @@ using Express.Net.Emit.Bootstrapping;
 using Express.Net.Models.NuGet;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Mono.Cecil;
+using Mono.Cecil.Cil;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -21,7 +23,7 @@ namespace Express.Net
     {
         private readonly string _projectName;
         private readonly string _projectPath;
-        private readonly string _output;
+        private readonly string _outputFolder;
         private readonly string _configuration;
 
         private SyntaxTree[]? _syntaxTrees;
@@ -32,7 +34,7 @@ namespace Express.Net
 
         public ExpressNetCompilation(string projectName, string projectPath, string output, string configuration)
         {
-            _output = output;
+            _outputFolder = output;
             _projectName = projectName;
             _projectPath = projectPath;
             _configuration = configuration;
@@ -100,8 +102,7 @@ namespace Express.Net
                 return new EmitResult(false, diagnostics.ToImmutable());
             }
 
-            var assemblyFileName = $"{_projectName}.dll";
-            var pdbFileName = $"{_projectName}.pdb";
+            var dllFileName = $"{_projectName}.dll";
 
             var compilation = CSharpCompilation
                 .Create(_projectName)
@@ -111,21 +112,21 @@ namespace Express.Net
                 .WithReferences(BuildReferences())
                 .AddSyntaxTrees(syntaxTrees);
 
-            var result = EmitAssembly(compilation, assemblyFileName, pdbFileName);
+            var result = EmitAssembly(compilation, dllFileName, configuration);
 
             foreach (var diagnostic in result.Diagnostics)
             {
                 diagnostics.Add(Diagnostic.FromCSharpDiagnostic(diagnostic));
             }
 
-            return new EmitResult(result.Success, diagnostics.ToImmutable(), _output, assemblyFileName, syntaxTrees.ToImmutableArray());
+            return new EmitResult(result.Success, diagnostics.ToImmutable(), _outputFolder, dllFileName, syntaxTrees.ToImmutableArray());
         }
 
         private bool ValidateCompilation(ImmutableArray<Diagnostic>.Builder diagnostics)
         {
             var error = false;
 
-            if (!Directory.Exists(_output))
+            if (!Directory.Exists(_outputFolder))
             {
                 diagnostics.Add(Diagnostic.Error(new TextLocation(), "Invalid output directory."));
                 error = true;
@@ -200,14 +201,74 @@ namespace Express.Net
             return references;
         }
 
-        private CSharpEmit.EmitResult EmitAssembly(CSharpCompilation compilation, string assemblyFileName, string pdbFileName)
+        private CSharpEmit.EmitResult EmitAssembly(CSharpCompilation compilation, string dllFileName, OptimizationLevel configuration)
         {
-            using var assemblyStream = File.OpenWrite(Path.Combine(_output, assemblyFileName));
-            using var pdbStream = File.OpenWrite(Path.Combine(_output, pdbFileName));
+            var filePath = Path.Combine(_outputFolder, dllFileName);
+
+            using var dllStream = new MemoryStream();
+            using var pdbStream = new MemoryStream();
 
             var emitOptions = new CSharpEmit.EmitOptions(debugInformationFormat: CSharpEmit.DebugInformationFormat.PortablePdb);
 
-            return compilation.Emit(assemblyStream, pdbStream, options: emitOptions);
+            var result = compilation.Emit(dllStream, pdbStream, options: emitOptions);
+
+            // Seek to start
+            dllStream.Position = 0;
+            pdbStream.Position = 0;
+
+            if (result.Success)
+            {
+                var readerParameters = new ReaderParameters
+                {
+                    ReadSymbols = true,
+                    SymbolStream = pdbStream,
+                };
+
+                using var assemblyDefinition = AssemblyDefinition.ReadAssembly(dllStream, readerParameters);
+
+                if (configuration == OptimizationLevel.Debug)
+                {
+                    // Correct the sequence points start and end colums to match 
+                    // the source files and update the file hash so debugging works
+                    var sequencePoints = assemblyDefinition.MainModule.Types
+                        .Where(t => t.BaseType?.FullName == "Express.Net.ControllerBase")
+                        .SelectMany(t => t.Methods)
+                        .Where(m => m.ReturnType.FullName == "Express.Net.IResult" && m.DebugInformation.HasSequencePoints)
+                        .SelectMany(m => m.DebugInformation.SequencePoints)
+                        .Where(sp => !sp.IsHidden);
+
+                    var syntaxTrees = _syntaxTrees?
+                        .Where(st => !string.IsNullOrEmpty(st.FilePath))
+                        .ToDictionary(st => st.FilePath!) ?? new Dictionary<string, SyntaxTree>();
+
+                    foreach (var sequencePoint in sequencePoints)
+                    {
+                        if (syntaxTrees.TryGetValue(sequencePoint.Document.Url, out var syntaxTree))
+                        {
+                            var startLine = syntaxTree.Text.Lines[sequencePoint.StartLine - 1];
+                            sequencePoint.StartColumn = startLine.StartWhitespaceExcluding + 1;
+
+                            var endLine = syntaxTree.Text.Lines[sequencePoint.EndLine - 1];
+                            sequencePoint.EndColumn = endLine.Length + 1;
+
+                            sequencePoint.Document.Hash = syntaxTree.Sha1Hash;
+                            sequencePoint.Document.HashAlgorithm = DocumentHashAlgorithm.SHA1;
+                            sequencePoint.Document.Language = DocumentLanguage.Other;
+                            sequencePoint.Document.LanguageVendor = DocumentLanguageVendor.Other;
+                            sequencePoint.Document.Type = DocumentType.Text;
+                        }
+                    }
+                }
+
+                var writerParameters = new WriterParameters
+                {
+                    WriteSymbols = true
+                };
+
+                assemblyDefinition.Write(filePath, writerParameters);
+            }
+
+            return result;
         }
     }
 }

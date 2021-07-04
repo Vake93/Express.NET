@@ -1,4 +1,6 @@
-﻿namespace Express.Net.CodeAnalysis.Text
+﻿using System.Linq;
+
+namespace Express.Net.CodeAnalysis.Text
 {
     public sealed class TextLine
     {
@@ -19,6 +21,8 @@
         public int End => Start + Length;
 
         public int LengthIncludingLineBreak { get; init; }
+
+        public int StartWhitespaceExcluding => Text.ToString(Span).TakeWhile(char.IsWhiteSpace).Count();
 
         public TextSpan Span => new (Start, Length);
 

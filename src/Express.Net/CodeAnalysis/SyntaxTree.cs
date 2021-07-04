@@ -29,7 +29,7 @@ namespace Express.Net.CodeAnalysis
 
         public string? FilePath { get; init; }
 
-        public byte[] Sha1Hash => Text.GetSha1Hash();
+        public byte[] Sha1Hash => Text.Sha1Hash;
 
         public SourceText Text { get; init; }
 

@@ -7,11 +7,15 @@ namespace Express.Net.CodeAnalysis.Text
     public sealed class SourceText
     {
         private readonly string _text;
+        private readonly byte[] _hash;
 
         private SourceText(string text)
         {
             _text = text;
             Lines = ParseLines(this, text);
+
+            using var sha1 = SHA1.Create();
+            _hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(_text));
         }
 
         public ImmutableArray<TextLine> Lines { get; init; }
@@ -19,6 +23,8 @@ namespace Express.Net.CodeAnalysis.Text
         public char this[int index] => _text[index];
 
         public int Length => _text.Length;
+
+        public byte[] Sha1Hash => _hash;
 
         public static SourceText From(string text)
         {
@@ -110,11 +116,5 @@ namespace Express.Net.CodeAnalysis.Text
         public string ToString(int start, int length) => _text.Substring(start, length);
 
         public string ToString(TextSpan span) => ToString(span.Start, span.Length);
-
-        public byte[] GetSha1Hash()
-        {
-            using var sha1 = SHA1.Create();
-            return sha1.ComputeHash(Encoding.UTF8.GetBytes(_text));
-        }
     }
 }
