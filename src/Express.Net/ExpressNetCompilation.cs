@@ -10,6 +10,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using CSharpEmit = Microsoft.CodeAnalysis.Emit;
 using CSharpSyntaxTree = Microsoft.CodeAnalysis.SyntaxTree;
 using Diagnostic = Express.Net.CodeAnalysis.Diagnostics.Diagnostic;
 using SyntaxTree = Express.Net.CodeAnalysis.SyntaxTree;
@@ -99,28 +101,25 @@ namespace Express.Net
                 return new EmitResult(false, diagnostics.ToImmutable());
             }
 
-            var references = BuildReferences();
-            var assemblyName = $"{_projectName}.dll";
-            var pdbName = $"{_projectName}.pdb";
+            var assemblyFileName = $"{_projectName}.dll";
+            var pdbFileName = $"{_projectName}.pdb";
 
             var compilation = CSharpCompilation
                 .Create(_projectName)
                 .WithOptions(new CSharpCompilationOptions(OutputKind.ConsoleApplication)
                 .WithOptimizationLevel(configuration)
                 .WithPlatform(Platform.AnyCpu))
-                .WithReferences(references)
+                .WithReferences(BuildReferences())
                 .AddSyntaxTrees(syntaxTrees);
 
-            var result = compilation.Emit(
-                Path.Combine(_output, assemblyName),
-                Path.Combine(_output, pdbName));
+            var result = EmitAssembly(compilation, assemblyFileName, pdbFileName);
 
             foreach (var diagnostic in result.Diagnostics)
             {
                 diagnostics.Add(Diagnostic.FromCSharpDiagnostic(diagnostic));
             }
 
-            return new EmitResult(result.Success, diagnostics.ToImmutable(), _output, assemblyName, syntaxTrees.ToImmutableArray());
+            return new EmitResult(result.Success, diagnostics.ToImmutable(), _output, assemblyFileName, syntaxTrees.ToImmutableArray());
         }
 
         private bool ValidateCompilation(ImmutableArray<Diagnostic>.Builder diagnostics)
@@ -200,6 +199,16 @@ namespace Express.Net
             }
 
             return references;
+        }
+
+        private CSharpEmit.EmitResult EmitAssembly(CSharpCompilation compilation, string assemblyFileName, string pdbFileName)
+        {
+            using var assemblyStream = File.OpenWrite(Path.Combine(_output, assemblyFileName));
+            using var pdbStream = File.OpenWrite(Path.Combine(_output, pdbFileName));
+
+            var emitOptions = new CSharpEmit.EmitOptions(debugInformationFormat: CSharpEmit.DebugInformationFormat.PortablePdb);
+
+            return compilation.Emit(assemblyStream, pdbStream, options: emitOptions);
         }
     }
 }
