@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using CSharpEmit = Microsoft.CodeAnalysis.Emit;
 using CSharpSyntaxTree = Microsoft.CodeAnalysis.SyntaxTree;
 using Diagnostic = Express.Net.CodeAnalysis.Diagnostics.Diagnostic;
