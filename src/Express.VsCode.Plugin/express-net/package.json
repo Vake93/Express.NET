@@ -30,6 +30,7 @@
         "scopeName": "source.en",
         "path": "./syntaxes/xps.tmLanguage.json"
       }
-    ]
+    ],
+    "breakpoints": [{"language": "xps"}]
   }
 }
