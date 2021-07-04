@@ -245,11 +245,17 @@ namespace Express.Net
                     {
                         if (syntaxTrees.TryGetValue(sequencePoint.Document.Url, out var syntaxTree))
                         {
-                            var startLine = syntaxTree.Text.Lines[sequencePoint.StartLine - 1];
-                            sequencePoint.StartColumn = startLine.StartWhitespaceExcluding + 1;
+                            if (syntaxTree.Text.Lines.Length >= sequencePoint.StartLine)
+                            {
+                                var startLine = syntaxTree.Text.Lines[sequencePoint.StartLine - 1];
+                                sequencePoint.StartColumn = startLine.StartWhitespaceExcluding + 1;
+                            }
 
-                            var endLine = syntaxTree.Text.Lines[sequencePoint.EndLine - 1];
-                            sequencePoint.EndColumn = endLine.Length + 1;
+                            if (syntaxTree.Text.Lines.Length >= sequencePoint.EndLine)
+                            {
+                                var endLine = syntaxTree.Text.Lines[sequencePoint.EndLine - 1];
+                                sequencePoint.EndColumn = endLine.Length + 1;
+                            }
 
                             sequencePoint.Document.Hash = syntaxTree.Sha1Hash;
                             sequencePoint.Document.HashAlgorithm = DocumentHashAlgorithm.SHA1;
