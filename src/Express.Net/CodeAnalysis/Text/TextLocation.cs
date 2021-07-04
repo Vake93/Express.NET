@@ -12,8 +12,6 @@
 
         public TextSpan Span { get; init; }
 
-        public string FileName => Text.FileName;
-
         public int StartLine => Text.GetLineIndex(Span.Start);
 
         public int StartCharacter => Span.Start - Text.Lines[StartLine].Start;

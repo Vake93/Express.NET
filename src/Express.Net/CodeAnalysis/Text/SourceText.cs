@@ -1,4 +1,6 @@
 ﻿using System.Collections.Immutable;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Express.Net.CodeAnalysis.Text
 {
@@ -6,10 +8,9 @@ namespace Express.Net.CodeAnalysis.Text
     {
         private readonly string _text;
 
-        private SourceText(string text, string fileName)
+        private SourceText(string text)
         {
             _text = text;
-            FileName = fileName;
             Lines = ParseLines(this, text);
         }
 
@@ -19,11 +20,9 @@ namespace Express.Net.CodeAnalysis.Text
 
         public int Length => _text.Length;
 
-        public string FileName { get; init; }
-
-        public static SourceText From(string text, string fileName = "")
+        public static SourceText From(string text)
         {
-            return new SourceText(text, fileName);
+            return new SourceText(text);
         }
 
         private static ImmutableArray<TextLine> ParseLines(SourceText sourceText, string text)
@@ -111,5 +110,11 @@ namespace Express.Net.CodeAnalysis.Text
         public string ToString(int start, int length) => _text.Substring(start, length);
 
         public string ToString(TextSpan span) => ToString(span.Start, span.Length);
+
+        public byte[] GetSha1Hash()
+        {
+            using var sha1 = SHA1.Create();
+            return sha1.ComputeHash(Encoding.UTF8.GetBytes(_text));
+        }
     }
 }

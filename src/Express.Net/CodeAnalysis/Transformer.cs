@@ -37,7 +37,7 @@ namespace Express.Net.CodeAnalysis
             compilationUnit = TransformServiceDeclarationSyntax(compilationUnit);
             compilationUnit = NormalizeWhitespace(compilationUnit);
 
-            return CSharp.SyntaxFactory.SyntaxTree(compilationUnit, path : _syntaxTree.FileName ?? string.Empty, encoding: Encoding.UTF8);
+            return CSharp.SyntaxFactory.SyntaxTree(compilationUnit, path : _syntaxTree.FilePath ?? string.Empty, encoding: Encoding.UTF8);
         }
 
         private static SyntaxList<CSharpSyntax.AttributeListSyntax> BuildAttributeLists(AttributeListSyntax? attributeList, SyntaxKind syntaxKind, string? route = null)
@@ -454,7 +454,7 @@ namespace Express.Net.CodeAnalysis
                 CSharp.SyntaxFactory.Trivia(
                     CSharp.SyntaxFactory.LineDirectiveTrivia(
                         CSharp.SyntaxFactory.Literal(lineNumber),
-                        CSharp.SyntaxFactory.Literal(_syntaxTree.FileName ?? string.Empty),
+                        CSharp.SyntaxFactory.Literal(_syntaxTree.FilePath ?? string.Empty),
                         true)) :
                 CSharp.SyntaxFactory.Trivia(
                     CSharp.SyntaxFactory.LineDirectiveTrivia(
