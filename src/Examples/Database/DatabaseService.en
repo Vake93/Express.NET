@@ -1,0 +1,26 @@
+using Dapper;
+using Npgsql;
+using System;
+
+service DatabaseService;
+
+csharp
+{
+    private static readonly string connectionString = Environment.GetEnvironmentVariable("SqlConnectionString");
+
+    public record Fortune(int Id, string Message);
+}
+
+get Ok<Fortune[]> ()
+{
+    using var connection = new NpgsqlConnection(connectionString);
+    var results = await connection.QueryAsync<Fortune>("SELECT * FROM fortune ORDER BY id");
+    return Ok(results);
+}
+
+get "{id}" Ok<Fortune> | NotFound<string> (route int id)
+{
+    using var connection = new NpgsqlConnection(connectionString);
+    var results = await connection.QueryFirstOrDefaultAsync<Fortune>("SELECT * FROM fortune WHERE id = @id", new { id });
+    return (results is null) ? NotFound($"Fortune with ID {id} not found") : Ok(results);
+}

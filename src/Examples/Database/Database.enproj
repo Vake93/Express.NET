@@ -1,0 +1,15 @@
+{
+  "packageReferences": [
+    {
+      "name": "Dapper",
+      "version": "2.0.90"
+    },
+	{
+      "name": "Npgsql",
+      "version": "5.0.7"
+    }
+  ],
+  "libraryReferences": [],
+  "generateSwaggerDoc": true,
+  "addSwaggerUI": true
+}

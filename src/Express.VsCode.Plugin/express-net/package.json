@@ -31,6 +31,10 @@
         "path": "./syntaxes/xps.tmLanguage.json"
       }
     ],
-    "breakpoints": [{"language": "xps"}]
+    "breakpoints": [
+      {
+        "language": "xps"
+      }
+    ]
   }
 }
