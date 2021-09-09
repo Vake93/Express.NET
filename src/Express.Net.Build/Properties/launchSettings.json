@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "Express.Build": {
-      "commandName": "Project",
-      "commandLineArgs": "build -i ../../../../Examples/HelloWorld"
-    }
-  }
-}

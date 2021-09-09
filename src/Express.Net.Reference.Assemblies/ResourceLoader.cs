@@ -1,43 +1,39 @@
-using System;
-using System.IO;
-using System.Reflection;
+﻿using System.Reflection;
 
-namespace Express.Net.Reference.Assemblies
+namespace Express.Net.Reference.Assemblies;
+
+internal static class ResourceLoader
 {
-    internal static class ResourceLoader
+    public static byte[] GetOrCreateResource(ref byte[]? resource, string name)
     {
-        private static Stream GetResourceStream(string name)
+        if (resource == null)
         {
-            var assembly = typeof(ResourceLoader).GetTypeInfo().Assembly;
-            var stream = assembly.GetManifestResourceStream(name);
-
-            if (stream == null)
-            {
-                throw new InvalidOperationException($"Resource '{name}' not found in {assembly.FullName}.");
-            }
-
-            return stream;
+            resource = GetResourceBlob(name);
         }
 
-        private static byte[] GetResourceBlob(string name)
+        return resource;
+    }
+
+    private static Stream GetResourceStream(string name)
+    {
+        var assembly = typeof(ResourceLoader).GetTypeInfo().Assembly;
+        var stream = assembly.GetManifestResourceStream(name);
+
+        if (stream == null)
         {
-            using var stream = GetResourceStream(name);
-            var bytes = new byte[stream.Length];
-
-            using var memoryStream = new MemoryStream(bytes);
-            stream.CopyTo(memoryStream);
-
-            return bytes;
+            throw new InvalidOperationException($"Resource '{name}' not found in {assembly.FullName}.");
         }
 
-        public static byte[] GetOrCreateResource(ref byte[]? resource, string name)
-        {
-            if (resource == null)
-            {
-                resource = GetResourceBlob(name);
-            }
+        return stream;
+    }
 
-            return resource;
-        }
+    private static byte[] GetResourceBlob(string name)
+    {
+        using var stream = GetResourceStream(name);
+        var bytes = new byte[stream.Length];
+
+        stream.Read(bytes);
+
+        return bytes;
     }
 }

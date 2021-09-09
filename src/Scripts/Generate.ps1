@@ -16,25 +16,24 @@ function Get-Content($name, $packagePath, [string]$excludePattern)
 "@;
 
   $codeContent = @"
-  // This is a generated file, please edit Generate.ps1 to change the contents
+// This is a generated file, please edit Generate.ps1 to change the contents
 
-  using System.Collections.Generic;
-  using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis;
 
-  namespace Express.Reference.Assemblies
-  {
+namespace Express.Net.Reference.Assemblies;
+
 
 "@;
 
   $codeContent += @"
-    internal static class $resourceTypeName
-    {
+internal static class $resourceTypeName
+{
 
 "@;
 
   $refContent = @"
-    public static class $name
-    {
+public static class $name
+{
 
 "@
 
@@ -71,39 +70,39 @@ function Get-Content($name, $packagePath, [string]$excludePattern)
     $allPropNames += $propName
     $fieldName = "_" + $propName
     $codeContent += @"
-        private static byte[]? $fieldName;
-        internal static byte[] $propName => ResourceLoader.GetOrCreateResource(ref $fieldName, "$logicalName");
+    private static byte[]? $fieldName;
+    internal static byte[] $propName => ResourceLoader.GetOrCreateResource(ref $fieldName, "$logicalName");
 
 "@
 
     $refContent += @"
-        public static PortableExecutableReference $propName { get; } = AssemblyMetadata.CreateFromImage($($resourceTypeName).$($propName)).GetReference(filePath: "$dllName", display: "$dll ($name)");
+    public static PortableExecutableReference $propName { get; } = AssemblyMetadata.CreateFromImage($($resourceTypeName).$($propName)).GetReference(filePath: "$dllName", display: "$dll ($name)");
 
 "@
 
   }
 
   $refContent += @"
-        public static IEnumerable<PortableExecutableReference> All { get; }= new PortableExecutableReference[]
-        {
+    public static IEnumerable<PortableExecutableReference> All { get; } = new PortableExecutableReference[]
+    {
 
 "@;
     foreach ($propName in $allPropNames)
     {
       $refContent += @"
-            $propName,
+      $propName,
 
 "@
     }
 
     $refContent += @"
-        };
-    }
+    };
+  }
 
 "@
 
     $codeContent += @"
-    }
+}
 
 "@
     $codeContent += $refContent;
@@ -113,21 +112,17 @@ function Get-Content($name, $packagePath, [string]$excludePattern)
   </Project>
 "@;
 
-  $codeContent += @"
-}
-"@
-
   return @{ CodeContent = $codeContent; TargetsContent = $targetsContent}
 }
 
 $combinedDir = Join-Path $PSScriptRoot "..\Express.Net.Reference.Assemblies"
 
-# Net50
-$map = Get-Content "Net50" 'microsoft.netcore.app.ref\5.0.0\ref\net5.0'
-$map.CodeContent | Out-File (Join-Path $combinedDir "Generated.Net50.cs") -Encoding Utf8
-$map.TargetsContent | Out-File (Join-Path $combinedDir "Generated.Net50.targets") -Encoding Utf8
+# Net60
+$map = Get-Content "Net60" 'microsoft.netcore.app.ref\6.0.0-preview.7.21377.19\ref\net6.0'
+$map.CodeContent | Out-File (Join-Path $combinedDir "Generated.Net60.cs") -Encoding Utf8
+$map.TargetsContent | Out-File (Join-Path $combinedDir "Generated.Net60.targets") -Encoding Utf8
 
-# AspNet50
-$map = Get-Content "AspNet50" 'microsoft.aspnetcore.app.ref\5.0.0\ref\net5.0'
-$map.CodeContent | Out-File (Join-Path $combinedDir "Generated.AspNet50.cs") -Encoding Utf8
-$map.TargetsContent | Out-File (Join-Path $combinedDir "Generated.AspNet50.targets") -Encoding Utf8
+# AspNet60
+$map = Get-Content "AspNet60" 'microsoft.aspnetcore.app.ref\6.0.0-preview.7.21378.6\ref\net6.0'
+$map.CodeContent | Out-File (Join-Path $combinedDir "Generated.AspNet60.cs") -Encoding Utf8
+$map.TargetsContent | Out-File (Join-Path $combinedDir "Generated.AspNet60.targets") -Encoding Utf8

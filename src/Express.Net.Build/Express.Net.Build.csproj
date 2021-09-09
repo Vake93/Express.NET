@@ -1,49 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <TargetFramework>net5.0</TargetFramework>
-    <PackageDescription>A fast DSL for build microservices.</PackageDescription>
-    <Authors>Vishvaka Ranasinghe</Authors>
-    <Description>Express.NET is a DSL for build fast web services effortlessly. This builds on top of .NET / ASP.NET 5.</Description>
-    <Copyright>2021 Vishvaka Ranasinghe</Copyright>
-    <RepositoryUrl>https://github.com/Vake93/Express.NET</RepositoryUrl>
   </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Spectre.Console" Version="0.40.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Express.Net\Express.Net.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="..\Library\Runtime\Express.Net.Base.dll">
-      <LogicalName>Express.Net.Base</LogicalName>
-      <Link>Resources\Express.Net.Base.dll</Link>
-    </EmbeddedResource>
-
-    <EmbeddedResource Include="..\Library\Runtime\Microsoft.OpenApi.dll">
-      <LogicalName>Microsoft.OpenApi</LogicalName>
-      <Link>Resources\Microsoft.OpenApi.dll</Link>
-    </EmbeddedResource>
-
-    <EmbeddedResource Include="..\Library\Runtime\Swashbuckle.AspNetCore.Swagger.dll">
-      <LogicalName>Swashbuckle.AspNetCore.Swagger</LogicalName>
-      <Link>Resources\Swashbuckle.AspNetCore.Swagger.dll</Link>
-    </EmbeddedResource>
-
-    <EmbeddedResource Include="..\Library\Runtime\Swashbuckle.AspNetCore.SwaggerGen.dll">
-      <LogicalName>Swashbuckle.AspNetCore.SwaggerGen</LogicalName>
-      <Link>Resources\Swashbuckle.AspNetCore.SwaggerGen.dll</Link>
-    </EmbeddedResource>
-
-    <EmbeddedResource Include="..\Library\Runtime\Swashbuckle.AspNetCore.SwaggerUI.dll">
-      <LogicalName>Swashbuckle.AspNetCore.SwaggerUI</LogicalName>
-      <Link>Resources\Swashbuckle.AspNetCore.SwaggerUI.dll</Link>
-    </EmbeddedResource>
-  </ItemGroup>
 
 </Project>
