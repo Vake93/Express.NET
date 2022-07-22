@@ -1,5 +1,12 @@
-﻿using Express.Net.CodeAnalysis.Syntax.Nodes;
+﻿using Express.Net.CodeAnalysis.Diagnostics;
+using Express.Net.CodeAnalysis.Syntax;
+using Express.Net.CodeAnalysis.Syntax.Nodes;
 using Express.Net.CodeAnalysis.Text;
+using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.IO;
+using System.Threading;
+using CSharpSyntaxTree = Microsoft.CodeAnalysis.SyntaxTree;
 
 namespace Express.Net.CodeAnalysis;
 
@@ -7,19 +14,111 @@ public sealed class SyntaxTree
 {
     private Dictionary<SyntaxNode, SyntaxNode?>? _parents;
 
-    public string? FilePath { get; init; }
+    private delegate void ParseHandler(SyntaxTree syntaxTree, out CompilationUnitSyntax root, out ImmutableArray<Diagnostic> diagnostics);
 
-    public byte[] Sha1Hash => Text.Sha1Hash;
+    private SyntaxTree(SourceText text, ParseHandler handler, string? filePath = null)
+    {
+        Text = text;
+
+        handler(this, out var root, out var diagnostics);
+
+        Diagnostics = new DiagnosticBag(diagnostics);
+        FilePath = filePath;
+        Root = root;
+    }
 
     public SourceText Text { get; init; }
 
+    public string? FilePath { get; init; }
+
+    public DiagnosticBag Diagnostics { get; init; }
+
+    public CompilationUnitSyntax Root { get; init; }
+
+    public byte[] Sha1Hash => Text.Sha1Hash;
+
     public static SyntaxTree FromFile(string filepath)
     {
-        throw new NotImplementedException();
+        var text = File.ReadAllText(filepath);
+        return Parse(text, filepath);
+    }
+
+    public static SyntaxTree Parse(string text, string? fileName = null) => Parse(SourceText.From(text), fileName);
+
+    public static SyntaxTree Parse(SourceText text, string? fileName = null) => new(text, Parse, fileName);
+
+    public static ImmutableArray<SyntaxToken> ParseTokens(string text, out ImmutableArray<Diagnostic> diagnostics, bool includeEndOfFile = false)
+    {
+        var sourceText = SourceText.From(text);
+        return ParseTokens(sourceText, out diagnostics, includeEndOfFile);
+    }
+
+    public static ImmutableArray<SyntaxToken> ParseTokens(SourceText text, out ImmutableArray<Diagnostic> diagnostics, bool includeEndOfFile = false)
+    {
+        var tokens = new List<SyntaxToken>();
+
+        void ParseTokens(SyntaxTree st, out CompilationUnitSyntax root, out ImmutableArray<Diagnostic> d)
+        {
+            var lexer = new Lexer(st);
+            while (true)
+            {
+                var token = lexer.Lex();
+
+                if (token.Kind != SyntaxKind.EndOfFileToken || includeEndOfFile)
+                    tokens.Add(token);
+
+                if (token.Kind == SyntaxKind.EndOfFileToken)
+                {
+                    root = new CompilationUnitSyntax(st, ImmutableArray<MemberSyntax>.Empty, token);
+                    break;
+                }
+            }
+
+            d = lexer.Diagnostics.ToImmutableArray();
+        }
+
+        var syntaxTree = new SyntaxTree(text, ParseTokens);
+        diagnostics = syntaxTree.Diagnostics.ToImmutableArray();
+        return tokens.ToImmutableArray();
+    }
+
+    public CSharpSyntaxTree Transform(string projectName, bool addDebugInfo, out DiagnosticBag diagnostics)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    private static void Parse(SyntaxTree syntaxTree, out CompilationUnitSyntax root, out ImmutableArray<Diagnostic> diagnostics)
+    {
+        throw new System.NotImplementedException();
     }
 
     internal SyntaxNode? GetParent(SyntaxNode syntaxNode)
     {
-        throw new NotImplementedException();
+        if (_parents == null)
+        {
+            var parents = CreateParentsDictionary(Root);
+            Interlocked.CompareExchange(ref _parents, parents, null);
+        }
+
+        return _parents[syntaxNode];
+    }
+
+    private Dictionary<SyntaxNode, SyntaxNode?> CreateParentsDictionary(CompilationUnitSyntax root)
+    {
+        var result = new Dictionary<SyntaxNode, SyntaxNode?>
+            {
+                { root, null }
+            };
+        CreateParentsDictionary(result, root);
+        return result;
+    }
+
+    private void CreateParentsDictionary(Dictionary<SyntaxNode, SyntaxNode?> result, SyntaxNode node)
+    {
+        foreach (var child in node.GetChildren())
+        {
+            result.Add(child, node);
+            CreateParentsDictionary(result, child);
+        }
     }
 }

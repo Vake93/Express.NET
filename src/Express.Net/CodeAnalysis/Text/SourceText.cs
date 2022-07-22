@@ -1,5 +1,5 @@
-﻿using Microsoft.CodeAnalysis.Text;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -19,6 +19,8 @@ public sealed class SourceText
         _hash = sha1.ComputeHash(Encoding.UTF8.GetBytes(text));
     }
 
+    public static SourceText Empty => new(string.Empty);
+
     public ImmutableArray<TextLine> Lines { get; init; }
 
     public char this[int index] => _text[index];
@@ -27,10 +29,7 @@ public sealed class SourceText
 
     public byte[] Sha1Hash => _hash;
 
-    public static SourceText From(string text)
-    {
-        return new SourceText(text);
-    }
+    public static SourceText From(string text) => new(text);
 
     public int GetLineIndex(int position)
     {
@@ -94,16 +93,17 @@ public sealed class SourceText
         }
 
         return result.ToImmutable();
+
+        static void AddLine(ImmutableArray<TextLine>.Builder result, SourceText sourceText, int position, int lineStart, int lineBreakWidth)
+        {
+            var lineLength = position - lineStart;
+            var lineLengthIncludingLineBreak = lineLength + lineBreakWidth;
+            var line = new TextLine(sourceText, lineStart, lineLength, lineLengthIncludingLineBreak);
+            result.Add(line);
+        }
     }
 
-    private static void AddLine(ImmutableArray<TextLine>.Builder result, SourceText sourceText, int position, int lineStart, int lineBreakWidth)
-    {
-        var lineLength = position - lineStart;
-        var lineLengthIncludingLineBreak = lineLength + lineBreakWidth;
-        var line = new TextLine(sourceText, lineStart, lineLength, lineLengthIncludingLineBreak);
-        result.Add(line);
-    }
-
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int GetLineBreakWidth(string text, int position)
     {
         var c = text[position];

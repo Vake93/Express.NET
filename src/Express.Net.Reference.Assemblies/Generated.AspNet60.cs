@@ -1,6 +1,7 @@
 ﻿// This is a generated file, please edit Generate.ps1 to change the contents
 
 using Microsoft.CodeAnalysis;
+using System.Collections.Generic;
 
 namespace Express.Net.Reference.Assemblies;
 
@@ -528,5 +529,5 @@ public static class AspNet60
       SystemIOPipelines,
       SystemSecurityCryptographyXml,
     };
-  }
+}
 

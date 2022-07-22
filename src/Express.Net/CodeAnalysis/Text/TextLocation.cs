@@ -1,18 +1,8 @@
-﻿using Microsoft.CodeAnalysis.Text;
+﻿namespace Express.Net.CodeAnalysis.Text;
 
-namespace Express.Net.CodeAnalysis.Text;
-
-public class TextLocation
+public record TextLocation(SourceText Text, TextSpan Span)
 {
-    public TextLocation(SourceText text, TextSpan span)
-    {
-        Text = text;
-        Span = span;
-    }
-
-    public SourceText Text { get; init; }
-
-    public TextSpan Span { get; init; }
+    public static TextLocation None => new(SourceText.Empty, TextSpan.Empty);
 
     public int StartLine => Text.GetLineIndex(Span.Start);
 

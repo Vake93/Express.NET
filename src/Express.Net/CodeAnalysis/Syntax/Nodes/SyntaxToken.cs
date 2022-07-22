@@ -1,31 +1,23 @@
-﻿using Microsoft.CodeAnalysis.Text;
+﻿using Express.Net.CodeAnalysis.Text;
+using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace Express.Net.CodeAnalysis.Syntax.Nodes;
 
-public sealed class SyntaxToken : SyntaxNode
+public sealed record SyntaxToken(
+    SyntaxTree SyntaxTree,
+    SyntaxKind Kind,
+    int Position,
+    string? Text,
+    object? Value,
+    ImmutableArray<SyntaxTrivia> LeadingTrivia,
+    ImmutableArray<SyntaxTrivia> TrailingTrivia) : SyntaxNode(SyntaxTree)
 {
-    internal SyntaxToken(SyntaxTree syntaxTree, SyntaxKind kind)
-        : base(syntaxTree)
-    {
-        Kind = kind;
-    }
-
-    public override SyntaxKind Kind { get; init; }
-
-    public int Position { get; init; }
-
-    public string? Text { get; init; }
-
-    public object? Value { get; init; }
-
     public override TextSpan Span => new(Position, Text?.Length ?? 0);
 
     public bool IsMissing => string.IsNullOrEmpty(Text);
-
-    public ImmutableArray<SyntaxTrivia> LeadingTrivia { get; }
-
-    public ImmutableArray<SyntaxTrivia> TrailingTrivia { get; }
 
     public override TextSpan FullSpan
     {

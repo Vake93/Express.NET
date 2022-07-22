@@ -1,17 +1,11 @@
 ﻿using Express.Net.CodeAnalysis.Text;
-using Microsoft.CodeAnalysis.Text;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Express.Net.CodeAnalysis.Syntax.Nodes;
 
-public abstract class SyntaxNode
+public abstract record SyntaxNode(SyntaxTree SyntaxTree)
 {
-    private protected SyntaxNode(SyntaxTree syntaxTree)
-    {
-        SyntaxTree = syntaxTree;
-    }
-
-    public SyntaxTree SyntaxTree { get; init; }
-
     public SyntaxNode? Parent => SyntaxTree.GetParent(this);
 
     public abstract SyntaxKind Kind { get; init; }
@@ -36,7 +30,7 @@ public abstract class SyntaxNode
         }
     }
 
-    public TextLocation Location => new (SyntaxTree.Text, Span);
+    public TextLocation Location => new(SyntaxTree.Text, Span);
 
     public abstract IEnumerable<SyntaxNode> GetChildren();
 
