@@ -89,7 +89,9 @@ public sealed class SyntaxTree
 
     private static void Parse(SyntaxTree syntaxTree, out CompilationUnitSyntax root, out ImmutableArray<Diagnostic> diagnostics)
     {
-        throw new System.NotImplementedException();
+        var parser = new Parser(syntaxTree);
+        root = parser.ParseCompilationUnit();
+        diagnostics = parser.Diagnostics.ToImmutableArray();
     }
 
     internal SyntaxNode? GetParent(SyntaxNode syntaxNode)

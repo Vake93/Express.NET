@@ -12,7 +12,7 @@ public record CSharpBlockSyntax(
     SyntaxToken CodeBlock,
     ImmutableArray<CSharpSyntax> Members) : MemberSyntax(SyntaxTree)
 {
-    public override SyntaxKind Kind { get; init; } = SyntaxKind.EndpointDeclaration;
+    public override SyntaxKind Kind { get; init; } = SyntaxKind.CSharpBlock;
 
     public override IEnumerable<SyntaxNode> GetChildren()
     {
