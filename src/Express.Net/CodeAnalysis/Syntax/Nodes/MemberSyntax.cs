@@ -18,13 +18,16 @@ public record UnknownStatementSyntax(
 }
 
 public record UsingDirectiveSyntax(
-    SyntaxTree SyntaxTree) : MemberSyntax(SyntaxTree)
+    SyntaxTree SyntaxTree,
+    SyntaxToken UsingKeyword,
+    NamespaceSyntax Namespace) : MemberSyntax(SyntaxTree)
 {
     public override SyntaxKind Kind { get; init; } = SyntaxKind.UsingDirective;
 
     public override IEnumerable<SyntaxNode> GetChildren()
     {
-        yield break;
+        yield return UsingKeyword;
+        yield return Namespace;
     }
 
     public override string ToString() => "Using Directive";

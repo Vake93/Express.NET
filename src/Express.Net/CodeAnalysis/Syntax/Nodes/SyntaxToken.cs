@@ -15,6 +15,13 @@ public sealed record SyntaxToken(
     ImmutableArray<SyntaxTrivia> LeadingTrivia,
     ImmutableArray<SyntaxTrivia> TrailingTrivia) : SyntaxNode(SyntaxTree)
 {
+    public SyntaxToken(
+        SyntaxTree syntaxTree,
+        SyntaxKind kind,
+        int position) : this(syntaxTree, kind, position, null, null, ImmutableArray<SyntaxTrivia>.Empty, ImmutableArray<SyntaxTrivia>.Empty)
+    {
+    }
+
     public override TextSpan Span => new(Position, Text?.Length ?? 0);
 
     public bool IsMissing => string.IsNullOrEmpty(Text);

@@ -25,13 +25,15 @@ public record CSharpBlockSyntax(
 
 public record CSharpSyntax(
     SyntaxTree SyntaxTree,
-    CSharpSyntaxNode CSharpStatement) : SyntaxNode(SyntaxTree)
+    CSharpSyntaxNode CSharpStatement,
+    TextSpan Span,
+    TextSpan FullSpan) : SyntaxNode(SyntaxTree)
 {
     public override SyntaxKind Kind { get; init; } = SyntaxKind.CSharpSyntax;
 
-    public override TextSpan Span { get; } = TextSpan.Empty;
+    public override TextSpan Span { get; } = Span;
 
-    public override TextSpan FullSpan { get; } = TextSpan.Empty;
+    public override TextSpan FullSpan { get; } = FullSpan;
 
     public override IEnumerable<SyntaxNode> GetChildren() => Array.Empty<SyntaxNode>();
 
