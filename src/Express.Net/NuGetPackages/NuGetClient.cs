@@ -1,4 +1,4 @@
-﻿using Express.Net.Models;
+using Express.Net.Models;
 using Express.Net.Models.NuGet;
 using Express.Net.Packages.Services;
 using NuGet.Common;
@@ -24,7 +24,7 @@ namespace Express.Net.Packages
 {
     public class NuGetClient
     {
-        private const string frameworkName = "net5.0";
+        private const string frameworkName = "net10.0";
         private const string objDirectoryName = "obj";
 
         private static readonly JsonSerializerOptions _jsonSerializerOptions = new()

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Routing;
 using System;
 using System.Collections.Generic;
 
@@ -18,7 +18,7 @@ namespace Express.Net
         {
             Method = method;
             Template = template;
-            HttpMethods = new List<string>() { method };
+            HttpMethods = [method];
         }
     }
 

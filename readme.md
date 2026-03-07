@@ -1,6 +1,6 @@
 # Express.NET
 
-Express.NET is a lightweight, low-ceremony Domain Specific Language (DSL) for building HTTP based services easily. It is based-on .NET / ASP.NET 5. With the use of concise language constructs, this allows you to focus on important bits.. your code and your application! Express.NET handles **DELETE, GET, HEAD, POST, PUT** and **PATCH** requests and provides a simple, elegant syntax for returning a response with just a couple of keystrokes.
+Express.NET is a lightweight, low-ceremony Domain Specific Language (DSL) for building HTTP based services easily. It is based-on .NET / ASP.NET 10. With the use of concise language constructs, this allows you to focus on important bits.. your code and your application! Express.NET handles **DELETE, GET, HEAD, POST, PUT** and **PATCH** requests and provides a simple, elegant syntax for returning a response with just a couple of keystrokes.
 
 # Hello world
 

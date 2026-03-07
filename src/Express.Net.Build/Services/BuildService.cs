@@ -1,4 +1,4 @@
-﻿using Express.Net.CodeAnalysis;
+using Express.Net.CodeAnalysis;
 using Express.Net.CodeAnalysis.Diagnostics;
 using Express.Net.Emit;
 using Express.Net.Emit.Bootstrapping;
@@ -46,7 +46,7 @@ namespace Express.Net.Build.Services
             Directory.CreateDirectory(executableFolder);
 
             var compilation = new ExpressNetCompilation(projectName, projectFolder, executableFolder, buildConfiguration)
-                .SetTargetFrameworks(TargetFrameworks.NetCore50, TargetFrameworks.AspNetCore50, TargetFrameworks.ExpressNet)
+                .SetTargetFrameworks(TargetFrameworks.NetCore10, TargetFrameworks.AspNetCore10, TargetFrameworks.ExpressNet)
                 .SetBootstrapper(new BasicBootstrapper(projectName, project.GenerateSwaggerDoc, project.AddSwaggerUI));
 
             var packageAssemblies = Enumerable.Empty<PackageAssembly>();
