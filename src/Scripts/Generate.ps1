@@ -122,12 +122,12 @@ function Get-Content($name, $packagePath, [string]$excludePattern)
 
 $combinedDir = Join-Path $PSScriptRoot "..\Express.Net.Reference.Assemblies"
 
-# Net50
-$map = Get-Content "Net50" 'microsoft.netcore.app.ref\5.0.0\ref\net5.0'
-$map.CodeContent | Out-File (Join-Path $combinedDir "Generated.Net50.cs") -Encoding Utf8
-$map.TargetsContent | Out-File (Join-Path $combinedDir "Generated.Net50.targets") -Encoding Utf8
+# Net10
+$map = Get-Content "Net10" 'microsoft.netcore.app.ref\10.0.0\ref\net10.0'
+$map.CodeContent | Out-File (Join-Path $combinedDir "Generated.Net10.cs") -Encoding Utf8
+$map.TargetsContent | Out-File (Join-Path $combinedDir "Generated.Net10.targets") -Encoding Utf8
 
-# AspNet50
-$map = Get-Content "AspNet50" 'microsoft.aspnetcore.app.ref\5.0.0\ref\net5.0'
-$map.CodeContent | Out-File (Join-Path $combinedDir "Generated.AspNet50.cs") -Encoding Utf8
-$map.TargetsContent | Out-File (Join-Path $combinedDir "Generated.AspNet50.targets") -Encoding Utf8
+# AspNet10
+$map = Get-Content "AspNet10" 'microsoft.aspnetcore.app.ref\10.0.0\ref\net10.0'
+$map.CodeContent | Out-File (Join-Path $combinedDir "Generated.AspNet10.cs") -Encoding Utf8
+$map.TargetsContent | Out-File (Join-Path $combinedDir "Generated.AspNet10.targets") -Encoding Utf8

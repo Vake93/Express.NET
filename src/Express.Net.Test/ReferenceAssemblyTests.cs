@@ -1,4 +1,4 @@
-﻿using Express.Net.Reference.Assemblies;
+using Express.Net.Reference.Assemblies;
 using Microsoft.CodeAnalysis.CSharp;
 using System.IO;
 using System.Linq;
@@ -9,7 +9,7 @@ namespace Express.Net.Tests
     public class ReferenceAssemblyTests
     {
         [Fact]
-        public void Net50Compilation()
+        public void Net10Compilation()
         {
             var source = @"
 using System;
@@ -24,7 +24,7 @@ class Program
             var compilation = CSharpCompilation.Create(
                 "Example",
                 new[] { CSharpSyntaxTree.ParseText(source) },
-                references: Net50.All);
+                references: Net10.All);
 
             Assert.Empty(compilation.GetDiagnostics());
 
@@ -36,7 +36,7 @@ class Program
         }
 
         [Fact]
-        public void AspNet50Compilation()
+        public void AspNet10Compilation()
         {
             var source = @"
 using Microsoft.AspNetCore.Builder;
@@ -73,7 +73,7 @@ CreateHostBuilder(args).Build().Run();";
             var compilation = CSharpCompilation.Create(
                 "Example",
                 new[] { CSharpSyntaxTree.ParseText(source) },
-                references: Net50.All.Union(AspNet50.All));
+                references: Net10.All.Union(AspNet10.All));
 
             Assert.Empty(compilation.GetDiagnostics());
 
